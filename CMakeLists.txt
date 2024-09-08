@@ -12,6 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
+add_subdirectory(source/3rdparty/SARibbon/)
+include_directories(source/3rdparty/SARibbon/src/SARibbonBar)
+
+
 set(TS_FILES TinyBlender_en_US.ts)
 
 set(PROJECT_SOURCES
@@ -53,6 +57,7 @@ else()
 endif()
 
 target_link_libraries(TinyBlender PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(TinyBlender PRIVATE SARibbonBar)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
