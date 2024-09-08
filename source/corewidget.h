@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QSplitter>
+#include <QStackedWidget>
+#include <QTabWidget>
 
 #include "SARibbonMainWindow.h"
 #include "SARibbonBar.h"
@@ -19,8 +21,11 @@ private:
     void createRibbonApplicationButton();
 
     QMenu* myAppButton;
-    SARibbonBar* myRibbon;
-    QSplitter* mySplitter;
+    SARibbonBar* myRibbonBar;
+    QSplitter* myMainSplitter;
+    QStackedWidget* myStackedWidget;
+    QTabWidget* mySideWidget;
+
     QAction *createAction(const QString &text, const QString &iconurl);
 };
 

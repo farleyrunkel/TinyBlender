@@ -1,6 +1,7 @@
 #include "corewidget.h"
 
 #include <QStatusBar>
+#include <QTabBar>
 
 #include "SARibbonMenu.h"
 #include "SARibbonBar.h"
@@ -11,7 +12,9 @@
 CoreWidget::CoreWidget(QWidget *parent)
     : SARibbonMainWindow(parent),
     myAppButton(nullptr),
-    mySplitter(nullptr)
+    myMainSplitter(nullptr),
+    myStackedWidget(nullptr),
+    mySideWidget(nullptr)
 {
     resize(1260, 800);
 
@@ -19,59 +22,71 @@ CoreWidget::CoreWidget(QWidget *parent)
     setStatusBar(new QStatusBar());
     setWindowIcon(QIcon("://icons/tinyblender.png"));
 
+    myMainSplitter = new QSplitter(Qt::Horizontal,this);
+    myMainSplitter->setHandleWidth(0);
+    setCentralWidget(myMainSplitter);
 
-    mySplitter = new QSplitter(Qt::Horizontal,this);
-
-    setCentralWidget(mySplitter);
-
-    auto mySideWidget = new QTabWidget;
+    mySideWidget = new QTabWidget;
     mySideWidget->setTabPosition(QTabWidget::West);
     mySideWidget->addTab(new QWidget, QIcon("://icon/save.svg"), "");
     mySideWidget->addTab(new QWidget, QIcon("://icon/save.svg"), "");
     mySideWidget->addTab(new QWidget, QIcon("://icon/save.svg"), "");
+    mySideWidget->setIconSize(QSize(30, 30));
 
-    auto myPageWidget = new QTabWidget;
-    myPageWidget->setTabPosition(QTabWidget::North);
-    myPageWidget->setTabsClosable(true);
-    myPageWidget->addTab(new QWidget, QIcon("://icon/save.svg"), "page 1");
-    myPageWidget->addTab(new QWidget, QIcon("://icon/save.svg"), "page 2");
-    myPageWidget->addTab(new QWidget, QIcon("://icon/save.svg"), "page 3");
+    myStackedWidget = new QStackedWidget;
+    myMainSplitter->addWidget(mySideWidget);
+    myMainSplitter->addWidget(myStackedWidget);
+    myMainSplitter->setSizes({1, 150});
+    myMainSplitter->setChildrenCollapsible(false);
 
-    mySplitter->addWidget(mySideWidget);
-    mySplitter->addWidget(myPageWidget);
-
-    myRibbon = ribbonBar();
+    myRibbonBar = ribbonBar();
     //! 通过setContentsMargins设置ribbon四周的间距
-    myRibbon->setContentsMargins(5, 0, 5, 0);
+    myRibbonBar->setContentsMargins(5, 0, 5, 0);
 
     createRibbonApplicationButton();
 
-    //Add main tab - The main tab is added through the addcategorypage factory function.
-    SARibbonCategory* categoryMain = myRibbon->addCategoryPage(tr("Main"));
-        //Using the addpannel function to create saribponpannel. The effect is the same as that of new saribponpannel, and then call SARibbonCategory:: addpannel.
-    SARibbonPannel* pannel1 = categoryMain->addPannel(("Panel 1"));
-    QAction* actSave = new QAction(this);
-    actSave->setText("save");
-    actSave->setIcon(QIcon("://icon/save.svg"));
-    actSave->setObjectName("actSave");
-    actSave->setShortcut(QKeySequence(QLatin1String("Ctrl+S")));
-    pannel1->addLargeAction(actSave);
+    {
+        //Add main tab - The main tab is added through the addcategorypage factory function.
+        SARibbonCategory* categoryEdit = myRibbonBar->addCategoryPage(tr("Edit"));
+            //Using the addpannel function to create saribponpannel. The effect is the same as that of new saribponpannel, and then call SARibbonCategory:: addpannel.
+        SARibbonPannel* pannel1 = categoryEdit->addPannel(("Panel 1"));
+        QAction* actSave = new QAction(this);
+        actSave->setText("save");
+        actSave->setIcon(QIcon("://icon/save.svg"));
+        actSave->setObjectName("actSave");
+        actSave->setShortcut(QKeySequence(QLatin1String("Ctrl+S")));
+        pannel1->addLargeAction(actSave);
+    }
+
+    {
+        //Add main tab - The main tab is added through the addcategorypage factory function.
+        SARibbonCategory* categorySelect = myRibbonBar->addCategoryPage(tr("Select"));
+            //Using the addpannel function to create saribponpannel. The effect is the same as that of new saribponpannel, and then call SARibbonCategory:: addpannel.
+        SARibbonPannel* pannel1 = categorySelect->addPannel(("Panel 1"));
+        QAction* actSave = new QAction(this);
+        actSave->setText("save");
+        actSave->setIcon(QIcon("://icon/save.svg"));
+        actSave->setObjectName("actSave");
+        actSave->setShortcut(QKeySequence(QLatin1String("Ctrl+S")));
+        pannel1->addLargeAction(actSave);
+    }
+
 }
 
 
 void CoreWidget::createRibbonApplicationButton()
 {
-    if (!myRibbon) {
+    if (!myRibbonBar) {
         return;
     }
-    QAbstractButton* btn = myRibbon->applicationButton();
+    QAbstractButton* btn = myRibbonBar->applicationButton();
     if (!btn) {
         // cn: SARibbonBar默认就会创建一个SARibbonApplicationButton，因此，在正常情况下，这个位置不会进入
         // en: SARibbonBar creates a SARibbonApplicationButton by default. Therefore, under normal circumstances, this location will not enter
         btn = new SARibbonApplicationButton(this);
-        myRibbon->setApplicationButton(btn);
+        myRibbonBar->setApplicationButton(btn);
     }
-    myRibbon->applicationButton()->setText(("  &File  "));  // 文字两边留有间距，好看一点
+    myRibbonBar->applicationButton()->setText(("  &File  "));  // 文字两边留有间距，好看一点
 
     // cn: SARibbonMenu和QMenu的操作是一样的
     // en: The operations of SARibbonMenu and QMenu are the same
