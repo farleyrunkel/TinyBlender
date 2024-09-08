@@ -16,7 +16,7 @@ add_subdirectory(source/3rdparty/SARibbon/)
 include_directories(source/3rdparty/SARibbon/src/SARibbonBar)
 
 
-set(TS_FILES TinyBlender_en_US.ts)
+set(TS_FILES resources/i18n/TinyBlender_en_US.ts)
 
 set(PROJECT_SOURCES
         source/main.cpp
