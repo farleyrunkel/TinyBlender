@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QMenu>
+#include <QSplitter>
 
 #include "SARibbonMainWindow.h"
 #include "SARibbonBar.h"
@@ -17,8 +18,9 @@ signals:
 private:
     void createRibbonApplicationButton();
 
-    QMenu* mMenuApplicationBtn;
-    SARibbonBar* ribbon;
+    QMenu* myAppButton;
+    SARibbonBar* myRibbon;
+    QSplitter* mySplitter;
     QAction *createAction(const QString &text, const QString &iconurl);
 };
 
