@@ -15,25 +15,26 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 add_subdirectory(source/3rdparty/SARibbon/)
 include_directories(source/3rdparty/SARibbon/src/SARibbonBar)
 
+# 递归查找所有的 .cpp 和 .h 文件
+file(GLOB PROJECT_SOURCES
+    "${CMAKE_SOURCE_DIR}/source/*.cpp"
+    "${CMAKE_SOURCE_DIR}/source/*.h"
+    "${CMAKE_SOURCE_DIR}/source/*/*.cpp"
+    "${CMAKE_SOURCE_DIR}/source/*/*.h"
+)
 
-set(TS_FILES resources/i18n/TinyBlender_en_US.ts)
-
-set(PROJECT_SOURCES
-        source/main.cpp
-        ${TS_FILES}
+set(PROJECT_RESOURCES
+    resources/i18n/TinyBlender_en_US.ts
+    resources/tinyblender.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(TinyBlender
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        source/core.h source/core.cpp
-        source/corewidget.h source/corewidget.cpp
-        source/tinyblendersettings.h source/tinyblendersettings.cpp
-        source/tinyblenderoptions.h source/tinyblenderoptions.cpp
-        resources/icons/splash.png
-        resources/tinyblender.qrc
+        ${PROJECT_RESOURCES}
     )
+
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET TinyBlender APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)

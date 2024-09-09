@@ -3,7 +3,7 @@
 
 #include <QDir>
 
-class TinyBlenderOptions
+class Options
 {
 public:
 
@@ -14,15 +14,14 @@ public:
     static QString dirSeparator();
     static void setDirSeparator(const QString &newDirSeparator);
 
-
 private:
-    TinyBlenderOptions() = default;
+    Options() = default;
 
     bool initializeSettings();
 
 private:
-    static QDir iconDir_;
-    static QString dirSeparator_;
+    static QDir myIconDir;
+    static QString myDirSeparator;
 };
 
 #endif // TINYBLENDEROPTIONS_H

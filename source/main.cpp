@@ -1,10 +1,10 @@
-#include "corewidget.h"
 
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
 
 #include "core.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
             break;
         }
     }
+
     Core w;
     w.init();
 

@@ -3,7 +3,7 @@
 
 #include <QSettings>
 
-class TinyBlenderSettings : public QSettings
+class Settings : public QSettings
 {
 public:
 
@@ -21,14 +21,14 @@ public:
 private:
 
     // Private constructor to prevent direct instantiation
-    TinyBlenderSettings() = default;
+    Settings() = default;
 
     // Deleted copy constructor and assignment operator to prevent copying
-    TinyBlenderSettings(const TinyBlenderSettings&) = delete;
-    TinyBlenderSettings& operator=(const TinyBlenderSettings&) = delete;
+    Settings(const Settings&) = delete;
+    Settings& operator=(const Settings&) = delete;
 
     // Static method to access the singleton instance
-    static TinyBlenderSettings& instance();
+    static Settings& instance();
 
 };
 

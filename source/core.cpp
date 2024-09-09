@@ -3,26 +3,25 @@
 #include <QEventLoop>
 #include <QTimer>
 
-#include "tinyblendersettings.h"
-#include "tinyblenderoptions.h"
+#include "settings.h"
+#include "options.h"
 
 Core::Core(QObject *parent)
     : QObject(parent),
-    coreWidget_(nullptr),
-    splash_(nullptr)
+    myMainWindow(nullptr),
+    mySplashScreen(nullptr)
 {}
 
 void Core::init() {
 
-
-    if (TinyBlenderSettings::value("core/Gui/splash", true).toBool() ) {
+    if (Settings::value("core/Gui/splash", true).toBool() ) {
        // QPixmap splashPixmap(TinyBlenderOptions::IconDirStr() + TinyBlenderOptions::dirSeparator() + "splash.png");
         QPixmap splashPixmap("://icons/splash.png");
         splashPixmap = splashPixmap.scaledToWidth(680);
-        splash_ = new QSplashScreen(splashPixmap, Qt::SplashScreen | Qt::WindowStaysOnTopHint);
-        splash_->show();
+        mySplashScreen = new QSplashScreen(splashPixmap, Qt::SplashScreen | Qt::WindowStaysOnTopHint);
+        mySplashScreen->show();
 
-        splash_->showMessage(tr("Initializing TinyBlender") ,
+        mySplashScreen->showMessage(tr("Initializing TinyBlender") ,
                              Qt::AlignTop | Qt::AlignLeft , Qt::white);
 
         QEventLoop* eventloop = new QEventLoop;
@@ -30,15 +29,15 @@ void Core::init() {
         eventloop->exec();
     }
 
-    coreWidget_ = new CoreWidget();
-    coreWidget_->show();
+    myMainWindow = new MainWindow();
+    myMainWindow->show();
     finishSplash();
 }
 
 void Core::finishSplash() {
-    if (splash_) {
-        splash_->finish(coreWidget_);
-        splash_->deleteLater();
-        splash_ = 0;
+    if (mySplashScreen) {
+        mySplashScreen->finish(myMainWindow);
+        mySplashScreen->deleteLater();
+        mySplashScreen = 0;
     }
 }

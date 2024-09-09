@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QSplashScreen>
 
-#include "corewidget.h"
+#include "mainwindow.h"
 
 class Core : public QObject
 {
@@ -18,8 +18,8 @@ public:
 
 signals:
 private:
-    CoreWidget *coreWidget_;
-    QSplashScreen* splash_;
+    MainWindow *myMainWindow;
+    QSplashScreen* mySplashScreen;
 
 };
 

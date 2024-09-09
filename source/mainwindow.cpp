@@ -1,4 +1,4 @@
-#include "corewidget.h"
+#include "mainwindow.h"
 
 #include <QStatusBar>
 #include <QTabBar>
@@ -9,41 +9,16 @@
 #include "SARibbonPannel.h"
 #include "SARibbonApplicationButton.h"
 
-CoreWidget::CoreWidget(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
     : SARibbonMainWindow(parent),
     myAppButton(nullptr),
     myMainSplitter(nullptr),
     myStackedWidget(nullptr),
     mySideWidget(nullptr)
 {
-    resize(1260, 800);
+    setupMainUi();
 
-    setWindowTitle(("TinyBlender"));
-    setStatusBar(new QStatusBar());
-    setWindowIcon(QIcon("://icons/tinyblender.png"));
-
-    myMainSplitter = new QSplitter(Qt::Horizontal,this);
-    myMainSplitter->setHandleWidth(0);
-    setCentralWidget(myMainSplitter);
-
-    mySideWidget = new QTabWidget;
-    mySideWidget->setTabPosition(QTabWidget::West);
-    mySideWidget->addTab(new QWidget, QIcon("://icon/save.svg"), "");
-    mySideWidget->addTab(new QWidget, QIcon("://icon/save.svg"), "");
-    mySideWidget->addTab(new QWidget, QIcon("://icon/save.svg"), "");
-    mySideWidget->setIconSize(QSize(30, 30));
-
-    myStackedWidget = new QStackedWidget;
-    myMainSplitter->addWidget(mySideWidget);
-    myMainSplitter->addWidget(myStackedWidget);
-    myMainSplitter->setSizes({1, 150});
-    myMainSplitter->setChildrenCollapsible(false);
-
-    myRibbonBar = ribbonBar();
-    //! 通过setContentsMargins设置ribbon四周的间距
-    myRibbonBar->setContentsMargins(5, 0, 5, 0);
-
-    createRibbonApplicationButton();
+    setupApplicationButton();
 
     {
         //Add main tab - The main tab is added through the addcategorypage factory function.
@@ -74,22 +49,51 @@ CoreWidget::CoreWidget(QWidget *parent)
 }
 
 
-void CoreWidget::createRibbonApplicationButton()
+void MainWindow::setupMainUi()
+{
+    resize(1260, 800);
+
+    setWindowTitle(("TinyBlender"));
+    setStatusBar(new QStatusBar());
+    setWindowIcon(QIcon(":/icons/tinyblender.png"));
+
+    // set ribbonbar
+    myRibbonBar = ribbonBar();
+    //! 通过setContentsMargins设置ribbon四周的间距
+    myRibbonBar->setContentsMargins(5, 0, 5, 0);
+
+    // set central widget
+    myMainSplitter = new QSplitter(Qt::Horizontal,this);
+    myMainSplitter->setHandleWidth(0);
+    setCentralWidget(myMainSplitter);
+
+    mySideWidget = new QTabWidget;
+    mySideWidget->setTabPosition(QTabWidget::West);
+    mySideWidget->addTab(new QWidget, QIcon(":/icon/save.svg"), "");
+    mySideWidget->addTab(new QWidget, QIcon(":/icon/save.svg"), "");
+    mySideWidget->addTab(new QWidget, QIcon(":/icon/save.svg"), "");
+    mySideWidget->setIconSize(QSize(30, 30));
+
+    myStackedWidget = new QStackedWidget;
+    myMainSplitter->addWidget(mySideWidget);
+    myMainSplitter->addWidget(myStackedWidget);
+    myMainSplitter->setSizes({1, 150});
+    myMainSplitter->setChildrenCollapsible(false);
+}
+
+
+void MainWindow::setupApplicationButton()
 {
     if (!myRibbonBar) {
         return;
     }
     QAbstractButton* btn = myRibbonBar->applicationButton();
     if (!btn) {
-        // cn: SARibbonBar默认就会创建一个SARibbonApplicationButton，因此，在正常情况下，这个位置不会进入
-        // en: SARibbonBar creates a SARibbonApplicationButton by default. Therefore, under normal circumstances, this location will not enter
         btn = new SARibbonApplicationButton(this);
         myRibbonBar->setApplicationButton(btn);
     }
     myRibbonBar->applicationButton()->setText(("  &File  "));  // 文字两边留有间距，好看一点
 
-    // cn: SARibbonMenu和QMenu的操作是一样的
-    // en: The operations of SARibbonMenu and QMenu are the same
     if (!myAppButton) {
         myAppButton = new SARibbonMenu(this);
         myAppButton->addAction(createAction("test1", "://icon/action.svg"));
@@ -104,7 +108,8 @@ void CoreWidget::createRibbonApplicationButton()
     appBtn->setMenu(myAppButton);
 }
 
-QAction* CoreWidget::createAction(const QString& text, const QString& iconurl)
+
+QAction* MainWindow::createAction(const QString& text, const QString& iconurl)
 {
     QAction* act = new QAction(this);
     act->setText(text);

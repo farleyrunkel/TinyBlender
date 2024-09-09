@@ -10,23 +10,27 @@
 #include "SARibbonMainWindow.h"
 #include "SARibbonBar.h"
 
-class CoreWidget : public SARibbonMainWindow
+class MainWindow : public SARibbonMainWindow
 {
     Q_OBJECT
 public:
-    explicit CoreWidget(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
 
 signals:
-private:
-    void createRibbonApplicationButton();
 
-    QMenu* myAppButton;
-    SARibbonBar* myRibbonBar;
-    QSplitter* myMainSplitter;
-    QStackedWidget* myStackedWidget;
-    QTabWidget* mySideWidget;
+private:
+    void setupMainUi();
+    void setupApplicationButton();
 
     QAction *createAction(const QString &text, const QString &iconurl);
+
+private:
+    QMenu*          myAppButton;
+    SARibbonBar*    myRibbonBar;
+    QSplitter*      myMainSplitter;
+    QStackedWidget* myStackedWidget;
+    QTabWidget*     mySideWidget;
+
 };
 
 #endif // COREWIDGET_H
