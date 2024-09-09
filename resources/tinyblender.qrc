@@ -63,5 +63,12 @@
         <file>icon/wordwrap.svg</file>
         <file>icon/Wrap-Image Left.svg</file>
         <file>icon/Wrap-Image Right.svg</file>
+        <file>icons/plane.svg</file>
+        <file>icons/cube.svg</file>
+        <file>icons/circle.svg</file>
+        <file>icons/sphere.svg</file>
+        <file>icons/cylinder.svg</file>
+        <file>icons/cone.svg</file>
+        <file>icons/torus.svg</file>
     </qresource>
 </RCC>

@@ -40,7 +40,7 @@ private:
     QOpenGLWidget*  myOpenGLWidget;
 
     GraphicsView*   myView;
-    QGraphicsScene* scene;
+    QGraphicsScene* myScene;
 
     QTabWidget*     mySideWidget;
 
