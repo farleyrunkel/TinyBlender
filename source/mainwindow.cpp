@@ -125,8 +125,14 @@ void MainWindow::setupCategories()
             }
         }
 
+
+    }
+
+    {
+        //Add main tab - The main tab is added through the addcategorypage factory function.
+        SARibbonCategory* categorySelect = myRibbonBar->addCategoryPage(tr("Primitives"));
         {
-            SARibbonPannel* aPrimPannel = categoryEdit->addPannel(("primitive"));
+            SARibbonPannel* aPrimPannel = categorySelect->addPannel(("Primitives"));
             {
                 QAction* aAction = new QAction(QIcon("://icons/plane.svg"), "Plane");
                 aPrimPannel->addLargeAction(aAction);
@@ -156,20 +162,6 @@ void MainWindow::setupCategories()
                 aPrimPannel->addLargeAction(aAction);
             }
         }
-
-    }
-
-    {
-        //Add main tab - The main tab is added through the addcategorypage factory function.
-        SARibbonCategory* categorySelect = myRibbonBar->addCategoryPage(tr("Select"));
-            //Using the addpannel function to create saribponpannel. The effect is the same as that of new saribponpannel, and then call SARibbonCategory:: addpannel.
-        SARibbonPannel* pannel1 = categorySelect->addPannel(("Panel 1"));
-        QAction* actSave = new QAction(this);
-        actSave->setText("save");
-        actSave->setIcon(QIcon("://icon/save.svg"));
-        actSave->setObjectName("actSave");
-        actSave->setShortcut(QKeySequence(QLatin1String("Ctrl+S")));
-        pannel1->addLargeAction(actSave);
     }
 }
 
