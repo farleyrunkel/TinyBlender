@@ -20,6 +20,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     setupApplicationButton();
 
+    setupCategories();
+
+    setupGraphicView();
+
+}
+
+void MainWindow::setupCategories()
+{
+
     {
         //Add main tab - The main tab is added through the addcategorypage factory function.
         SARibbonCategory* categoryEdit = myRibbonBar->addCategoryPage(tr("Edit"));
@@ -45,9 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
         actSave->setShortcut(QKeySequence(QLatin1String("Ctrl+S")));
         pannel1->addLargeAction(actSave);
     }
-
 }
-
 
 void MainWindow::setupMainUi()
 {
@@ -75,12 +82,31 @@ void MainWindow::setupMainUi()
     mySideWidget->setIconSize(QSize(30, 30));
 
     myStackedWidget = new QStackedWidget;
+
     myMainSplitter->addWidget(mySideWidget);
     myMainSplitter->addWidget(myStackedWidget);
-    myMainSplitter->setSizes({1, 150});
     myMainSplitter->setChildrenCollapsible(false);
+    myMainSplitter->setSizes({1, 150});
+
 }
 
+void MainWindow::setupGraphicView()
+{
+    myView = new GraphicsView();
+
+    scene = new QGraphicsScene;
+
+    scene->addPixmap(QPixmap(":/icons/tinyblender.png"));
+
+    myOpenGLWidget = new QOpenGLWidget(myView);
+
+    myView->setViewport(myOpenGLWidget);
+    myView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    myView->setScene(scene);
+    myView->setFrameStyle(QFrame::NoFrame);
+
+    myStackedWidget->addWidget(myView);
+}
 
 void MainWindow::setupApplicationButton()
 {
