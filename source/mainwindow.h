@@ -45,6 +45,10 @@ private:
     QTabWidget*     mySideWidget;
 
     void setupCategories();
+
+public slots:
+    void slotGetRibbonCategory(QString _name, SARibbonCategory *&_menu, bool _create);
+
 };
 
 #endif // COREWIDGET_H

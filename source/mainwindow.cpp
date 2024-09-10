@@ -124,8 +124,6 @@ void MainWindow::setupCategories()
                 aPannel->addLargeAction(aAction);
             }
         }
-
-
     }
 
     {
@@ -165,6 +163,7 @@ void MainWindow::setupCategories()
     }
 }
 
+
 QAction* MainWindow::createAction(const QString& text, const QString& iconurl)
 {
     QAction* act = new QAction(this);
@@ -174,3 +173,19 @@ QAction* MainWindow::createAction(const QString& text, const QString& iconurl)
     return act;
 }
 
+
+void MainWindow::slotGetRibbonCategory (QString _name, SARibbonCategory *& _menu, bool _create)
+{
+	// if menu with name already exists, return it
+	SARibbonCategory* category = myRibbonBar->categoryByName(_name);
+	if (category) {
+		_menu = category;
+		return;
+	}
+	else if (_create) {
+		_menu = myRibbonBar->addCategoryPage(_name);
+	}
+	else {
+		_menu = nullptr;
+	}
+}
