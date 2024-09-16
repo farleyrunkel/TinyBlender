@@ -1,0 +1,24 @@
+project(tbinterface)
+
+set(MODULE_TBINTERFACE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH "Module interface include")
+
+# Recursively find all files
+file(GLOB MODULE_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+)
+
+add_library(${PROJECT_NAME} SHARED
+    ${MODULE_SOURCES})
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE SARibbonBar)
+
+install(TARGETS ${PROJECT_NAME}
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)

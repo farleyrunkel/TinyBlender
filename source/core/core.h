@@ -16,6 +16,12 @@ public:
 
     void finishSplash();
 
+private:
+    void loadPlugins() {
+        
+    
+    }
+
 signals:
 private:
     MainWindow *myMainWindow;

@@ -9,19 +9,24 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools OpenGLWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools OpenGLWidgets)
 
 add_subdirectory(source/3rdparty/SARibbon/)
 include_directories(source/3rdparty/SARibbon/src/SARibbonBar)
 
-# 递归查找所有的 .cpp 和 .h 文件
-file(GLOB PROJECT_SOURCES
-    "${CMAKE_SOURCE_DIR}/source/*.cpp"
-    "${CMAKE_SOURCE_DIR}/source/*.h"
-    "${CMAKE_SOURCE_DIR}/source/*/*.cpp"
-    "${CMAKE_SOURCE_DIR}/source/*/*.h"
-)
+add_subdirectory(source/core)
+include_directories(${MODULE_TBCORE_INCLUDE})
+message(STATUS "MODULE_TBCORE_INCLUDE: ${MODULE_TBCORE_INCLUDE}")
+
+add_subdirectory(source/interface)
+include_directories(source/interface)
+include_directories(source/primitives)
+
+# Set the main project source
+set(PROJECT_SOURCES source/main.cpp)
 
 set(PROJECT_RESOURCES
     resources/i18n/TinyBlender_en_US.ts
@@ -33,7 +38,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         ${PROJECT_RESOURCES}
-        source/graphicsview.h source/graphicsview.cpp
     )
 
 # Define target properties for Android with Qt 6 as:
@@ -61,6 +65,7 @@ endif()
 target_link_libraries(TinyBlender PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(TinyBlender PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
 target_link_libraries(TinyBlender PRIVATE SARibbonBar)
+target_link_libraries(TinyBlender PRIVATE tbcore)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
