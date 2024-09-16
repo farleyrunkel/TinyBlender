@@ -1,5 +1,10 @@
 project(tbinterface)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(MODULE_TBINTERFACE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH "Module interface include")
 
 # Recursively find all files
@@ -16,6 +21,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
 target_link_libraries(${PROJECT_NAME} PRIVATE SARibbonBar)
+
+target_compile_options(${PROJECT_NAME} PRIVATE /Zc:__cplusplus)
 
 install(TARGETS ${PROJECT_NAME}
     BUNDLE DESTINATION .
