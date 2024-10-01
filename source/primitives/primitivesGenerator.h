@@ -18,7 +18,7 @@ class PrimitivesGenerator : public QObject, public BaseInterface
 	Q_INTERFACES(BaseInterface)
 
 public:
-	QString name() const { 
+	QString name() const {
 		return QString("PrimitivesGenerator"); 
 	};
 

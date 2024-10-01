@@ -17,13 +17,13 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Ope
 add_subdirectory(source/3rdparty/SARibbon/)
 include_directories(source/3rdparty/SARibbon/src/SARibbonBar)
 
-add_subdirectory(source/core)
-include_directories(${MODULE_TBCORE_INCLUDE})
-message(STATUS "MODULE_TBCORE_INCLUDE: " ${MODULE_TBCORE_INCLUDE})
-
 add_subdirectory(source/interface)
 include_directories(${MODULE_TBINTERFACE_INCLUDE})
 message(STATUS "MODULE_TBINTERFACE_INCLUDE: " ${MODULE_TBINTERFACE_INCLUDE})
+
+add_subdirectory(source/core)
+include_directories(${MODULE_TBCORE_INCLUDE})
+message(STATUS "MODULE_TBCORE_INCLUDE: " ${MODULE_TBCORE_INCLUDE})
 
 add_subdirectory(source/primitives)
 include_directories(${MODULE_TBPRIMITIVES_INCLUDE})

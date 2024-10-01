@@ -5,6 +5,8 @@
 
 #include "settings.h"
 #include "options.h"
+#include "baseinterface.h"
+
 
 Core::Core(QObject *parent)
     : QObject(parent),
@@ -13,6 +15,7 @@ Core::Core(QObject *parent)
 {}
 
 void Core::init() {
+	loadPlugins();
 
     if (Settings::value("core/Gui/splash", true).toBool() ) {
        // QPixmap splashPixmap(TinyBlenderOptions::IconDirStr() + TinyBlenderOptions::dirSeparator() + "splash.png");
@@ -31,6 +34,7 @@ void Core::init() {
 
     myMainWindow = new MainWindow();
     myMainWindow->show();
+
     finishSplash();
 }
 
@@ -41,3 +45,21 @@ void Core::finishSplash() {
         mySplashScreen = 0;
     }
 }
+
+void Core::loadPlugins() {
+    const auto staticInstances = QPluginLoader::staticInstances();
+    for (QObject* plugin : staticInstances) {
+        BaseInterface* basePlugin = qobject_cast<BaseInterface*>(plugin);
+        if (basePlugin) {
+            loadPlugin(basePlugin);
+        }
+    }
+}
+
+void Core::loadPlugin(BaseInterface* plugin) {
+     qDebug() << "Loading plugin: " << plugin->name();
+ }
+
+void Core::setupConnections() {
+      connect(myMainWindow, &MainWindow::destroyed, this, &Core::finishSplash);
+  }

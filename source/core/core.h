@@ -3,8 +3,11 @@
 
 #include <QObject>
 #include <QSplashScreen>
+#include <QPluginLoader>
 
 #include "mainwindow.h"
+#include "baseinterface.h"
+
 
 class Core : public QObject
 {
@@ -17,10 +20,11 @@ public:
     void finishSplash();
 
 private:
-    void loadPlugins() {
-        
-    
-    }
+    void loadPlugins();
+
+	void loadPlugin(BaseInterface* plugin);
+
+	void setupConnections();
 
 signals:
 private:

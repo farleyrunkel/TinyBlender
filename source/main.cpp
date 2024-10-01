@@ -10,6 +10,7 @@
 
 Q_IMPORT_PLUGIN(PrimitivesGenerator)
 
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
