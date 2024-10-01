@@ -6,6 +6,10 @@
 #include "core.h"
 #include "mainwindow.h"
 
+#include "primitivesGenerator.h"
+
+Q_IMPORT_PLUGIN(PrimitivesGenerator)
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

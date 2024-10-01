@@ -2,6 +2,7 @@
 #define BASE_INTERFACE_H
 
 #include <QString>
+#include <QtPlugin>
 
 class BaseInterface {
 public:
@@ -10,6 +11,10 @@ public:
 };
 
 
+#define BaseInterface_iid "TinyBlender.BaseInterface"
+
+Q_DECLARE_INTERFACE(BaseInterface, BaseInterface_iid)
+
+
 #endif // BASE_INTERFACE_H
 
-Q_DECLARE_INTERFACE(BaseInterface, "TinyBlender.BaseInterface")

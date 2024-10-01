@@ -20,6 +20,7 @@ include_directories(source/3rdparty/SARibbon/src/SARibbonBar)
 add_subdirectory(source/core)
 include_directories(${MODULE_TBCORE_INCLUDE})
 message(STATUS "MODULE_TBCORE_INCLUDE: " ${MODULE_TBCORE_INCLUDE})
+
 add_subdirectory(source/interface)
 include_directories(${MODULE_TBINTERFACE_INCLUDE})
 message(STATUS "MODULE_TBINTERFACE_INCLUDE: " ${MODULE_TBINTERFACE_INCLUDE})
@@ -68,9 +69,12 @@ endif()
 target_link_libraries(TinyBlender PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(TinyBlender PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
 target_link_libraries(TinyBlender PRIVATE SARibbonBar)
+
 target_link_libraries(TinyBlender PRIVATE tbcore)
+target_link_libraries(TinyBlender PRIVATE tbprimitives)
 
 target_compile_options(TinyBlender PRIVATE /Zc:__cplusplus)
+
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

@@ -4,14 +4,18 @@
 #include <QObject>
 #include <QString>
 #include <QPluginLoader>
+#include <QStaticPlugin>
 
 #include "baseinterface.h"
 
 
-class PrimitivesGenerator : public QObject, public BaseInterface {
+class PrimitivesGenerator : public QObject, public BaseInterface 
+{
 	Q_OBJECT
-	Q_INTERFACES(BaseInterface)
+
 	Q_PLUGIN_METADATA(IID "TinyBlender.Plugins.PrimitiveGenerator")
+
+	Q_INTERFACES(BaseInterface)
 
 public:
 	QString name() const { 
@@ -22,5 +26,3 @@ public:
 };
 
 #endif // !PRIMITIVESGENERATOR_H
-
-// Q_IMPORT_PLUGIN(PrimitivesGenerator)
