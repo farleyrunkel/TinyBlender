@@ -126,41 +126,6 @@ void MainWindow::setupCategories()
         }
     }
 
-    {
-        //Add main tab - The main tab is added through the addcategorypage factory function.
-        SARibbonCategory* categorySelect = myRibbonBar->addCategoryPage(tr("Primitives"));
-        {
-            SARibbonPannel* aPrimPannel = categorySelect->addPannel(("Primitives"));
-            {
-                QAction* aAction = new QAction(QIcon("://icons/plane.svg"), "Plane");
-                aPrimPannel->addLargeAction(aAction);
-            }
-            {
-                QAction* aAction = new QAction(QIcon("://icons/cube.svg"), "Cube", aPrimPannel);
-                aPrimPannel->addLargeAction(aAction);
-            }
-            {
-                QAction* aAction = new QAction(QIcon("://icons/circle.svg"), "Circle", aPrimPannel);
-                aPrimPannel->addLargeAction(aAction);
-            }
-            {
-                QAction* aAction = new QAction(QIcon("://icons/sphere.svg"), "Sphere", aPrimPannel);
-                aPrimPannel->addLargeAction(aAction);
-            }
-            {
-                QAction* aAction = new QAction(QIcon("://icons/cylinder.svg"), "Cylinder", aPrimPannel);
-                aPrimPannel->addLargeAction(aAction);
-            }
-            {
-                QAction* aAction = new QAction(QIcon("://icons/cone.svg"), "Cone", aPrimPannel);
-                aPrimPannel->addLargeAction(aAction);
-            }
-            {
-                QAction* aAction = new QAction(QIcon("://icons/torus.svg"), "Torus", aPrimPannel);
-                aPrimPannel->addLargeAction(aAction);
-            }
-        }
-    }
 }
 
 
@@ -188,5 +153,3 @@ void MainWindow::slotGetRibbonCategory(QString name, SARibbonCategory*& menu, bo
         menu = nullptr;
     }
 }
-
-

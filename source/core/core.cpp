@@ -1,16 +1,13 @@
 #include "core.h"
-#include "core.h"
-#include "core.h"
-#include "core.h"
-#include "core.h"
-#include "core.h"
 
 #include <QEventLoop>
 #include <QTimer>
+#include <QApplication>
 
 #include "settings.h"
 #include "options.h"
 #include "baseinterface.h"
+#include "menuinterface.h"
 
 
 Core::Core(QObject *parent)
@@ -20,7 +17,6 @@ Core::Core(QObject *parent)
 {}
 
 void Core::init() {
-	loadPlugins();
 
     if (Settings::value("core/Gui/splash", true).toBool() ) {
        // QPixmap splashPixmap(TinyBlenderOptions::IconDirStr() + TinyBlenderOptions::dirSeparator() + "splash.png");
@@ -41,6 +37,9 @@ void Core::init() {
     myMainWindow->show();
 
     finishSplash();
+
+    loadPlugins();
+
 }
 
 void Core::finishSplash() {
@@ -70,9 +69,19 @@ void Core::loadPlugin(QObject* plugin) {
             basePlugin->initializePlugin();
     }
 
+
+    //Check if the plugin supports Menubar-Interface
+    MenuInterface* menubarPlugin = qobject_cast<MenuInterface*>(plugin);
+
+    if (menubarPlugin) {
+        if (checkSignal(plugin, "getRibbonCategory(QString, SARibbonCategory*&, bool)"))
+            connect(plugin, SIGNAL(getRibbonCategory(QString, SARibbonCategory*&, bool)), myMainWindow, SLOT(slotGetRibbonCategory(QString, SARibbonCategory*&, bool)), Qt::AutoConnection);
+    }
+
     if (checkSlot(plugin, "pluginsInitialized()")) {
         connect(this, &Core::pluginsInitialized, [basePlugin]() {basePlugin->pluginsInitialized(); });
     }
+
 
     emit pluginsInitialized();
  }
@@ -81,7 +90,7 @@ void Core::setupConnections() {
       connect(myMainWindow, &MainWindow::destroyed, this, &Core::finishSplash);
   }
 
-inline bool Core::checkSlot(QObject* _plugin, const char* _slotSignature) {
+bool Core::checkSlot(QObject* _plugin, const char* _slotSignature) {
     const QMetaObject* meta = _plugin->metaObject();
     int id = meta->indexOfSlot(QMetaObject::normalizedSignature(_slotSignature));
     return (id != -1);

@@ -4,6 +4,7 @@
 #include <QAction>
 #include <QMenuBar>
 
+#include "SARibbonBar.h"
 
 /// The Menu will be added inside the File Menu
 #define FILEMENU tr("File")
@@ -21,8 +22,9 @@
 #define PYTHONMENU tr("Python")
 
 
-class MenuInterface {
-
+class MenuInterface 
+{
+    
 public:
 
     /// Destructor
@@ -39,6 +41,8 @@ signals:
      * @param _create Should a new menu be created if id doesn't exist
    */
     virtual void getMenubarMenu(QString _name, QMenu*& _menu, bool _create) {};
+
+    virtual void getRibbonCategory(QString name, SARibbonCategory*& menu, bool create) {};
 
     /**  \brief Adds an action to the menubar
       *
