@@ -1,0 +1,3 @@
+[submodule "source/3rdparty/KDBindings"]
+	path = source/3rdparty/KDBindings
+	url = git@github.com:KDAB/KDBindings.git
