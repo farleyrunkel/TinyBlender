@@ -1,13 +1,23 @@
 #ifndef BASE_INTERFACE_H
 #define BASE_INTERFACE_H
 
+#include <QObject>
 #include <QString>
 #include <QtPlugin>
 
 class BaseInterface {
+
 public:
     virtual ~BaseInterface() {}
     virtual QString name() const = 0;
+
+
+public slots:
+
+    virtual void initializePlugin() {};
+
+    virtual void pluginsInitialized() {};
+
 };
 
 

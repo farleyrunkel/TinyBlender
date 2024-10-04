@@ -7,9 +7,9 @@
 #include <QStaticPlugin>
 
 #include "baseinterface.h"
+#include "menuinterface.h"
 
-
-class PrimitivesGenerator : public QObject, public BaseInterface 
+class PrimitivesGenerator : public QObject, public BaseInterface, public MenuInterface
 {
 	Q_OBJECT
 
@@ -22,6 +22,14 @@ public:
 		return QString("PrimitivesGenerator"); 
 	};
 
+signals:
+
+
+public slots:
+
+	void initializePlugin() override { qDebug() << "initializePlugin PrimitivesGenerator;"; };
+
+    void pluginsInitialized() override { qDebug() << "PrimitivesGenerator pluginsInitialized;"; };
 
 };
 

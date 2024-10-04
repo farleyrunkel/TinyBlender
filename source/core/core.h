@@ -22,11 +22,21 @@ public:
 private:
     void loadPlugins();
 
-	void loadPlugin(BaseInterface* plugin);
+    void loadPlugin(QObject* plugin);
+
 
 	void setupConnections();
 
+    bool checkSlot(QObject* _plugin, const char* _slotSignature);
+
+    bool checkSignal(QObject* _plugin, const char* _signalSignature);
+
+
 signals:
+
+    void pluginsInitialized();
+
+
 private:
     MainWindow *myMainWindow;
     QSplashScreen* mySplashScreen;

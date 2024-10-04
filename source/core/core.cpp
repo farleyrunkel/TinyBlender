@@ -1,4 +1,9 @@
 #include "core.h"
+#include "core.h"
+#include "core.h"
+#include "core.h"
+#include "core.h"
+#include "core.h"
 
 #include <QEventLoop>
 #include <QTimer>
@@ -49,17 +54,42 @@ void Core::finishSplash() {
 void Core::loadPlugins() {
     const auto staticInstances = QPluginLoader::staticInstances();
     for (QObject* plugin : staticInstances) {
-        BaseInterface* basePlugin = qobject_cast<BaseInterface*>(plugin);
-        if (basePlugin) {
-            loadPlugin(basePlugin);
-        }
+
+         loadPlugin(plugin);       
     }
 }
 
-void Core::loadPlugin(BaseInterface* plugin) {
-     qDebug() << "Loading plugin: " << plugin->name();
+
+void Core::loadPlugin(QObject* plugin) {
+
+    BaseInterface* basePlugin = qobject_cast<BaseInterface*>(plugin);
+
+    // Initialize Plugin
+    if (basePlugin) {
+        if (checkSlot(plugin, "initializePlugin()"))
+            basePlugin->initializePlugin();
+    }
+
+    if (checkSlot(plugin, "pluginsInitialized()")) {
+        connect(this, &Core::pluginsInitialized, [basePlugin]() {basePlugin->pluginsInitialized(); });
+    }
+
+    emit pluginsInitialized();
  }
 
 void Core::setupConnections() {
       connect(myMainWindow, &MainWindow::destroyed, this, &Core::finishSplash);
   }
+
+inline bool Core::checkSlot(QObject* _plugin, const char* _slotSignature) {
+    const QMetaObject* meta = _plugin->metaObject();
+    int id = meta->indexOfSlot(QMetaObject::normalizedSignature(_slotSignature));
+    return (id != -1);
+}
+
+
+bool Core::checkSignal(QObject* _plugin, const char* _signalSignature) {
+    const QMetaObject* meta = _plugin->metaObject();
+    int id = meta->indexOfSignal(QMetaObject::normalizedSignature(_signalSignature));
+    return (id != -1);
+}
