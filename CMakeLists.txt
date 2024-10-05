@@ -14,8 +14,11 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools OpenGLWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools OpenGLWidgets)
 
-add_subdirectory(source/3rdparty/SARibbon/)
+add_subdirectory(source/3rdparty/SARibbon)
 include_directories(source/3rdparty/SARibbon/src/SARibbonBar)
+
+add_subdirectory(source/3rdparty/KDBindings)
+include_directories(source/3rdparty/KDBindings/src)
 
 add_subdirectory(source/interface)
 include_directories(${MODULE_TBINTERFACE_INCLUDE})
@@ -68,13 +71,15 @@ endif()
 
 target_link_libraries(TinyBlender PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(TinyBlender PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
+
 target_link_libraries(TinyBlender PRIVATE SARibbonBar)
+target_link_libraries(TinyBlender PRIVATE KDBindings)
 
 target_link_libraries(TinyBlender PRIVATE tbcore)
 target_link_libraries(TinyBlender PRIVATE tbprimitives)
 
-target_compile_options(TinyBlender PRIVATE /Zc:__cplusplus)
 
+target_compile_options(TinyBlender PRIVATE /Zc:__cplusplus)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
