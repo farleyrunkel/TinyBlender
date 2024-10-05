@@ -13,7 +13,7 @@ class Core : public QObject
 {
     Q_OBJECT
 public:
-    explicit Core(QObject *parent = nullptr);
+    explicit Core(QObject* theParent = nullptr);
 
     void init();
 
@@ -22,14 +22,14 @@ public:
 private:
     void loadPlugins();
 
-    void loadPlugin(QObject* plugin);
+    void loadPlugin(QObject* thePlugin);
 
 
 	void setupConnections();
 
-    bool checkSlot(QObject* _plugin, const char* _slotSignature);
+    bool checkSlot(QObject* thePlugin, const char* theSlotSignature);
 
-    bool checkSignal(QObject* _plugin, const char* _signalSignature);
+    bool checkSignal(QObject* thePlugin, const char* theSlotSignature);
 
 
 signals:

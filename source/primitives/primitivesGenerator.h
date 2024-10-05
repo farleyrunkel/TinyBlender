@@ -35,7 +35,7 @@ public slots:
     void pluginsInitialized() override;
 
 private:
-    SARibbonCategory* primitivesMenu_ = nullptr;
+    SARibbonCategory* myPrimitivesMenu = nullptr;
 
 };
 

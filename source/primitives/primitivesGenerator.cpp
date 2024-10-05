@@ -13,10 +13,10 @@ void PrimitivesGenerator::pluginsInitialized() {
 
     qDebug() << "pluginsInitialized PrimitivesGenerator;";
 
-    signalGetRibbonCategory(tr("&Primitives"), primitivesMenu_, true);
+    signalGetRibbonCategory(tr("&Primitives"), myPrimitivesMenu, true);
 
     {
-        SARibbonPannel* aPrimPannel = primitivesMenu_->addPannel(("Primitives"));
+        SARibbonPannel* aPrimPannel = myPrimitivesMenu->addPannel(("Primitives"));
         {
             QAction* aAction = new QAction(QIcon("://icons/plane.svg"), "Plane");
             aPrimPannel->addLargeAction(aAction);

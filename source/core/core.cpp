@@ -12,8 +12,8 @@
 #include "menuinterface.h"
 
 
-Core::Core(QObject *parent)
-    : QObject(parent),
+Core::Core(QObject* theParent)
+    : QObject(theParent),
     myMainWindow(nullptr),
     mySplashScreen(nullptr)
 {}
@@ -22,17 +22,17 @@ void Core::init() {
 
     if (Settings::value("core/Gui/splash", true).toBool() ) {
        // QPixmap splashPixmap(TinyBlenderOptions::IconDirStr() + TinyBlenderOptions::dirSeparator() + "splash.png");
-        QPixmap splashPixmap("://icons/splash.png");
-        splashPixmap = splashPixmap.scaledToWidth(680);
-        mySplashScreen = new QSplashScreen(splashPixmap, Qt::SplashScreen | Qt::WindowStaysOnTopHint);
+        QPixmap aSplashPixmap("://icons/splash.png");
+        aSplashPixmap = aSplashPixmap.scaledToWidth(680);
+        mySplashScreen = new QSplashScreen(aSplashPixmap, Qt::SplashScreen | Qt::WindowStaysOnTopHint);
         mySplashScreen->show();
 
         mySplashScreen->showMessage(tr("Initializing TinyBlender") ,
                              Qt::AlignTop | Qt::AlignLeft , Qt::white);
 
-        QEventLoop* eventloop = new QEventLoop;
-        QTimer::singleShot(2000, eventloop, &QEventLoop::quit);
-        eventloop->exec();
+        QEventLoop* aEventloop = new QEventLoop;
+        QTimer::singleShot(2000, aEventloop, &QEventLoop::quit);
+        aEventloop->exec();
     }
 
     myMainWindow = new MainWindow();
@@ -53,36 +53,28 @@ void Core::finishSplash() {
 }
 
 void Core::loadPlugins() {
-    const auto staticInstances = QPluginLoader::staticInstances();
-    for (QObject* plugin : staticInstances) {
-
-         loadPlugin(plugin);       
+    const auto aStaticInstances = QPluginLoader::staticInstances();
+    for (QObject* aPlugin : aStaticInstances) {
+         loadPlugin(aPlugin);
     }
 }
 
 
-void Core::loadPlugin(QObject* plugin) {
+void Core::loadPlugin(QObject* thePlugin) {
 
-    BaseInterface* basePlugin = qobject_cast<BaseInterface*>(plugin);
+    BaseInterface* aBasePlugin = qobject_cast<BaseInterface*>(thePlugin);
 
     // Initialize Plugin
-    if (basePlugin) {
-        if (checkSlot(plugin, "initializePlugin()"))
-            basePlugin->initializePlugin();
+    if (aBasePlugin) {
+        aBasePlugin->initializePlugin();
+        connect(this, &Core::pluginsInitialized, [aBasePlugin]() {aBasePlugin->pluginsInitialized();});
     }
-
 
     //Check if the plugin supports Menubar-Interface
-    MenuInterface* menubarPlugin = qobject_cast<MenuInterface*>(plugin);
-    if (menubarPlugin) {
-
-        menubarPlugin->signalGetRibbonCategory.connect(boost::bind(&MainWindow::slotGetRibbonCategory, myMainWindow, _1, _2, _3));
+    MenuInterface* aMenuPlugin = qobject_cast<MenuInterface*>(thePlugin);
+    if (aMenuPlugin) {
+        aMenuPlugin->signalGetRibbonCategory.connect(boost::bind(&MainWindow::slotGetRibbonCategory, myMainWindow, _1, _2, _3));
     }
-
-    if (checkSlot(plugin, "pluginsInitialized()")) {
-        connect(this, &Core::pluginsInitialized, [basePlugin]() {basePlugin->pluginsInitialized(); });
-    }
-
 
     emit pluginsInitialized();
  }
@@ -91,15 +83,15 @@ void Core::setupConnections() {
       connect(myMainWindow, &MainWindow::destroyed, this, &Core::finishSplash);
   }
 
-bool Core::checkSlot(QObject* _plugin, const char* _slotSignature) {
-    const QMetaObject* meta = _plugin->metaObject();
-    int id = meta->indexOfSlot(QMetaObject::normalizedSignature(_slotSignature));
-    return (id != -1);
+bool Core::checkSlot(QObject* thePlugin, const char* theSlotSignature) {
+    const QMetaObject* meta = thePlugin->metaObject();
+    int aIndex = meta->indexOfSlot(QMetaObject::normalizedSignature(theSlotSignature));
+    return (aIndex != -1);
 }
 
 
-bool Core::checkSignal(QObject* _plugin, const char* _signalSignature) {
-    const QMetaObject* meta = _plugin->metaObject();
-    int id = meta->indexOfSignal(QMetaObject::normalizedSignature(_signalSignature));
-    return (id != -1);
+bool Core::checkSignal(QObject* thePlugin, const char* theSlotSignature) {
+    const QMetaObject* aMeta = thePlugin->metaObject();
+    int aIndex = aMeta->indexOfSignal(QMetaObject::normalizedSignature(theSlotSignature));
+    return (aIndex != -1);
 }

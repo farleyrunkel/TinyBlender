@@ -35,7 +35,8 @@ public:
 
 public:
 
-    boost::signals2::signal<void(QString , SARibbonCategory*& , bool )> signalGetRibbonCategory;
+	/// Signal to get the Ribbon Category
+	boost::signals2::signal<void(QString, SARibbonCategory*&, bool)> signalGetRibbonCategory;
 
 };
 
