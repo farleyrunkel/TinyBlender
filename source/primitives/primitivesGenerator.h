@@ -34,6 +34,14 @@ public slots:
 
     void pluginsInitialized() override;
 
+public slots:
+
+	QString version() { return QString("1.0"); };
+
+
+	int addSphere(const Vector& _position = Vector(0.0, 0.0, 0.0),
+		const double _radius = 1.0);
+
 private:
     SARibbonCategory* myPrimitivesMenu = nullptr;
 

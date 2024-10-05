@@ -34,11 +34,11 @@ public:
 public:
 
 	/// Signal to get the Ribbon Category
-    signal <void(QString, SARibbonCategory*&, bool)>  signalGetRibbonCategory;
+    signal <void(QString, SARibbonCategory*&, bool)> signalGetRibbonCategory;
 };
 
 
-#define MenuInterface_iid "TinyBlender.MenuInterface"
+#define MenuInterface_iid "TinyBlender.Interface.MenuInterface"
 
 Q_DECLARE_INTERFACE(MenuInterface, MenuInterface_iid)
 

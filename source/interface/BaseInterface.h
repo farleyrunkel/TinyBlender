@@ -5,22 +5,23 @@
 #include <QString>
 #include <QtPlugin>
 
-class BaseInterface {
+class BaseInterface 
+{
 
 public:
-    virtual ~BaseInterface() {}
+
     virtual QString name() const = 0;
-
-public:
 
     virtual void initializePlugin() {};
 
     virtual void pluginsInitialized() {};
 
+public:
+    virtual ~BaseInterface() {}
 };
 
 
-#define BaseInterface_iid "TinyBlender.BaseInterface"
+#define BaseInterface_iid "TinyBlender.Interface.BaseInterface"
 
 Q_DECLARE_INTERFACE(BaseInterface, BaseInterface_iid)
 
