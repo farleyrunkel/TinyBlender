@@ -4,9 +4,9 @@
 #include <QAction>
 #include <QMenuBar>
 
-#include <boost/signals2/signal.hpp>
-
 #include "SARibbonBar.h"
+#include "signal.h"
+
 
 /// The Menu will be added inside the File Menu
 #define FILEMENU tr("File")
@@ -23,21 +23,18 @@
 /// The Menu will be added inside the Python Menu
 #define PYTHONMENU tr("Python")
 
-
 class MenuInterface 
 {
-    
+
 public:
 
     /// Destructor
     virtual ~MenuInterface() {};
 
-
 public:
 
 	/// Signal to get the Ribbon Category
-	boost::signals2::signal<void(QString, SARibbonCategory*&, bool)> signalGetRibbonCategory;
-
+    signal <void(QString, SARibbonCategory*&, bool)>  signalGetRibbonCategory;
 };
 
 
