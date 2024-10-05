@@ -13,7 +13,7 @@ void PrimitivesGenerator::pluginsInitialized() {
 
     qDebug() << "pluginsInitialized PrimitivesGenerator;";
 
-    emit getRibbonCategory(tr("&Primitives"), primitivesMenu_, true);
+    signalGetRibbonCategory(tr("&Primitives"), primitivesMenu_, true);
 
     {
         SARibbonPannel* aPrimPannel = primitivesMenu_->addPannel(("Primitives"));

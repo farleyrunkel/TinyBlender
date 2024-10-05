@@ -11,14 +11,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+set(Boost_DIR E:/Libraries/boost_1_85_0/out/lib/cmake/Boost-1.85.0)
+set(Boost_NO_SYSTEM_PATHS ON)
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools OpenGLWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools OpenGLWidgets)
 
+find_package(Boost)
+include_directories(${Boost_INCLUDE_DIRS})
+message(STATUS "Boost_INCLUDE_DIRS: " ${Boost_INCLUDE_DIRS})
+
 add_subdirectory(source/3rdparty/SARibbon)
 include_directories(source/3rdparty/SARibbon/src/SARibbonBar)
-
-add_subdirectory(source/3rdparty/KDBindings)
-include_directories(source/3rdparty/KDBindings/src)
 
 add_subdirectory(source/interface)
 include_directories(${MODULE_TBINTERFACE_INCLUDE})
@@ -73,7 +77,6 @@ target_link_libraries(TinyBlender PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(TinyBlender PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
 
 target_link_libraries(TinyBlender PRIVATE SARibbonBar)
-target_link_libraries(TinyBlender PRIVATE KDBindings)
 
 target_link_libraries(TinyBlender PRIVATE tbcore)
 target_link_libraries(TinyBlender PRIVATE tbprimitives)

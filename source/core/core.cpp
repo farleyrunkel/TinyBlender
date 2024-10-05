@@ -4,6 +4,8 @@
 #include <QTimer>
 #include <QApplication>
 
+#include <boost/bind.hpp>
+
 #include "settings.h"
 #include "options.h"
 #include "baseinterface.h"
@@ -72,10 +74,9 @@ void Core::loadPlugin(QObject* plugin) {
 
     //Check if the plugin supports Menubar-Interface
     MenuInterface* menubarPlugin = qobject_cast<MenuInterface*>(plugin);
-
     if (menubarPlugin) {
-        if (checkSignal(plugin, "getRibbonCategory(QString, SARibbonCategory*&, bool)"))
-            connect(plugin, SIGNAL(getRibbonCategory(QString, SARibbonCategory*&, bool)), myMainWindow, SLOT(slotGetRibbonCategory(QString, SARibbonCategory*&, bool)), Qt::AutoConnection);
+
+        menubarPlugin->signalGetRibbonCategory.connect(boost::bind(&MainWindow::slotGetRibbonCategory, myMainWindow, _1, _2, _3));
     }
 
     if (checkSlot(plugin, "pluginsInitialized()")) {

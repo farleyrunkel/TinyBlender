@@ -11,8 +11,7 @@ public:
     virtual ~BaseInterface() {}
     virtual QString name() const = 0;
 
-
-public slots:
+public:
 
     virtual void initializePlugin() {};
 
