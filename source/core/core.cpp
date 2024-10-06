@@ -1,15 +1,20 @@
 #include "core.h"
+#include "core.h"
+#include "core.h"
 
 #include <QEventLoop>
 #include <QTimer>
 #include <QApplication>
+#include <QThread>
 
 #include <boost/bind.hpp>
 
 #include "settings.h"
 #include "options.h"
+
 #include "baseinterface.h"
 #include "menuinterface.h"
+#include "TypeInterface.h"
 
 
 Core::Core(QObject* theParent)
@@ -76,12 +81,50 @@ void Core::loadPlugin(QObject* thePlugin) {
         aMenuPlugin->signalGetRibbonCategory.connect(boost::bind(&MainWindow::slotGetRibbonCategory, myMainWindow, _1, _2, _3));
     }
 
+
+    TypeInterface* LoadSavePlugin = qobject_cast<TypeInterface*>(thePlugin);
+    if (LoadSavePlugin) {
+        LoadSavePlugin->signalAddEmptyObject.connect(boost::bind(&Core::slotAddEmptyObject, this, _1, _2));
+    }
+
     emit pluginsInitialized();
  }
 
+void Core::slotAddEmptyObject(int theType, int& theId) {
+
+    if (QThread::currentThread() != QApplication::instance()->thread())
+    {
+        //execute method in main thread
+        QMetaObject::invokeMethod(this, "slotAddEmptyObject", Qt::BlockingQueuedConnection, Q_ARG(DataType, theType), Q_ARG(int*, &theId));
+    }
+    else
+    {
+        theId = addEmptyObject(theType);
+    }
+}
+
+
+int Core::addEmptyObject(DataType _type) {
+    //// Iterate over all plugins. The first plugin supporting the addEmpty function for the
+    //// specified type will be used to create the new object. If adding the object failed,
+    //// we iterate over the remaining plugins.
+
+    //// Iterate over type plugins
+    //for (int i = 0; i < (int)supportedDataTypes_.size(); i++)
+    //    if (supportedDataTypes_[i].type & _type) {
+    //        int retCode = supportedDataTypes_[i].plugin->addEmpty();
+    //        if (retCode != -1)
+    //            return retCode;
+    //    }
+
+    return -1; // no plugin found
+}
+
+
 void Core::setupConnections() {
       connect(myMainWindow, &MainWindow::destroyed, this, &Core::finishSplash);
-  }
+}
+
 
 bool Core::checkSlot(QObject* thePlugin, const char* theSlotSignature) {
     const QMetaObject* meta = thePlugin->metaObject();

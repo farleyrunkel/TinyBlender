@@ -1,0 +1,914 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QtMaterialDialogUi</class>
+ <widget class="QWidget" name="QtMaterialDialogUi">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>623</width>
+    <height>663</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Edit Material</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QGroupBox" name="MaterialBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Material</string>
+       </property>
+       <layout class="QGridLayout" name="MaterialBoxLayout">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>9</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>9</number>
+        </property>
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <item row="0" column="1">
+         <spacer name="s4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1">
+         <layout class="QGridLayout" name="ColorButtonLayout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QtColorChooserButton" name="baseColorButton">
+            <property name="toolTip">
+             <string>Emitted color (Independent of light sources)</string>
+            </property>
+            <property name="statusTip">
+             <string>Emitted color (Independent of light sources)</string>
+            </property>
+            <property name="whatsThis">
+             <string>Emitted color (Independent of light sources)</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Emissive Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QtColorChooserButton" name="ambientColorButton">
+            <property name="toolTip">
+             <string>Ambient color</string>
+            </property>
+            <property name="statusTip">
+             <string>Ambient color</string>
+            </property>
+            <property name="whatsThis">
+             <string>Ambient color</string>
+            </property>
+            <property name="accessibleName">
+             <string/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Ambient Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QtColorChooserButton" name="diffuseColorButton">
+            <property name="toolTip">
+             <string>Diffuse color</string>
+            </property>
+            <property name="statusTip">
+             <string>Diffuse color</string>
+            </property>
+            <property name="whatsThis">
+             <string>Diffuse color</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Diffuse Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QtColorChooserButton" name="specularColorButton">
+            <property name="toolTip">
+             <string>Specular color</string>
+            </property>
+            <property name="statusTip">
+             <string>Specular color</string>
+            </property>
+            <property name="whatsThis">
+             <string>Specular color</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_4">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Specular Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="label_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Shininess</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QSlider" name="shininessSlider">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="shininessBox"/>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Overlay Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QtColorChooserButton" name="overlayColorButton">
+            <property name="toolTip">
+             <string>Overlay color</string>
+            </property>
+            <property name="statusTip">
+             <string>Overlay color</string>
+            </property>
+            <property name="whatsThis">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Additional Overlay color.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This is mainly used for overlays, such as wireframe&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="2">
+         <spacer name="s3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="1">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::MinimumExpanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="ThicknessBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Thickness</string>
+       </property>
+       <layout class="QGridLayout" name="ThicknessBoxLayout">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>9</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>9</number>
+        </property>
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <item row="1" column="1">
+         <layout class="QVBoxLayout">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QGridLayout" name="PointLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QDoubleSpinBox" name="pointSizeSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignRight</set>
+              </property>
+              <property name="minimum">
+               <double>0.010000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QDoubleSpinBox" name="lineWidthSpinBox">
+              <property name="alignment">
+               <set>Qt::AlignRight</set>
+              </property>
+              <property name="minimum">
+               <double>0.010000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_6">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Point Size</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="label_7">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Line Width</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="roundPointsCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Round Points</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="lineSmoothCheckBox">
+            <property name="text">
+             <string>Smooth Lines</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="2">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="1">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="1">
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="RenderingBox">
+         <property name="title">
+          <string>Rendering</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="backfaceCulling">
+            <property name="toolTip">
+             <string>This checkbox controls if faces where only the 
+back is visible should be rendered.</string>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Backface Culling</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QCheckBox" name="alphaTest">
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="text">
+               <string>Alpha Test</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="alpha">
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="blending">
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Blending</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QComboBox" name="blendParam1">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>GL_ZERO</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_SRC_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_SRC_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_DST_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_DST_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_SRC_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_SRC_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_DST_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_DST_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_CONSTANT_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_CONSTANT_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_CONSTANT_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_CONSTANT_ALPHA</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QComboBox" name="blendParam2">
+            <item>
+             <property name="text">
+              <string>GL_ZERO</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_SRC_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_SRC_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_DST_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_DST_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_SRC_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_SRC_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_DST_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_DST_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_CONSTANT_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_CONSTANT_COLOR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_CONSTANT_ALPHA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GL_ONE_MINUS_CONSTANT_ALPHA</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="colorMaterial">
+            <property name="text">
+             <string>Color Material</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="multiSampling">
+            <property name="text">
+             <string>Multi Sampling</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="sp1">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>10</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="title">
+        <string>Active Properties</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QCheckBox" name="baseColorActive">
+          <property name="text">
+           <string>Base Color</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="materialActive">
+          <property name="text">
+           <string>Material</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="pointSizeActive">
+          <property name="text">
+           <string>Point Size</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="lineWidthActive">
+          <property name="text">
+           <string>Line Width</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="roundPointsActive">
+          <property name="text">
+           <string>Round Points</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="lineSmoothActive">
+          <property name="text">
+           <string>Line Smooth</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="alphaTestActive">
+          <property name="text">
+           <string>Alpha Test</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="blendingActive">
+          <property name="text">
+           <string>Blending</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="backfaceCullingActive">
+          <property name="text">
+           <string>Backface Culling</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="colorMaterialActive">
+          <property name="text">
+           <string>Color Material</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="multiSamplingActive">
+          <property name="text">
+           <string>Multi Sampling</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="l1">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::MinimumExpanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="okButton">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtColorChooserButton</class>
+   <extends>QPushButton</extends>
+   <header>ACG/QtWidgets/QtColorChooserButton.hh</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>shininessSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>shininessBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>240</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shininessBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>shininessSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>75</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

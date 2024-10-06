@@ -1,0 +1,525 @@
+/** \page ShaderGenPage Dynamic shader assembly overview
+
+ACG supports shader generation at runtime and offers a modular shader assembly method.
+The main class of interest is ShaderProgGenerator, which generates a complete GLSL program composed of vertex, fragment and optionally geometry and tessellation shaders.
+This page documents the assembly process of generated shaders and how ShaderModifers and templates will affect the process.
+GLSL versions 1.3 and higher are supported.
+
+\section shaderFixed Fixed shader code
+
+Some parts of shader code are fixed and will be available in any generated shader.
+These include, but are not limited to:
+
+- essential input uniforms (model-view-projection matrix, global lights..)
+
+- essential input/output between two shader stages (ie. normal, texcoord)
+
+- vertex transformation 
+
+- default lighting functions
+
+- default texturing
+
+\section namingConvention Naming convention
+
+The following naming conventions for uniforms, stage input/output and local variables are used:
+
+- Defines: prefix "SG_", all uppercase
+
+- Uniforms: prefix "g_"
+
+- Local variables: prefix "sg_"
+
+- vertex shader input: prefix "in"
+
+- vertex shader output: prefix "outVertex"
+
+- tessellation-control shader output: prefix "outTc"
+
+- tessellation-evaluation shader output: prefix "outTe"
+
+- geometry shader output: prefix "outGeometry"
+
+- fragment shader output: prefix "outFragment"
+
+****Modifiers and templates can not actually control any shader code provided by the ShaderGenerator, 
+****but they can add additional code lines that may overwrite or extend the results of the generated code.
+
+\section shaderDefines Default defines
+
+The ShaderGenerator writes the current configuration given in ShaderGenDesc to a shader with the help of defines.
+These defines in the generated shader reflect the state of the active ShaderGenDesc.
+
+Shading mode: defines in which stage lighting should be performed.
+One of the following defines is generated based on the state of ShaderGenDesc::shadeMode.
+
+\code
+#define SG_GOURAUD 1   // only added iff shadeMode == SG_SHADE_GOURAUD
+#define SG_FLAT 1      // only added iff shadeMode == SG_SHADE_FLAT
+#define SG_UNLIT 1     // only added iff shadeMode == SG_SHADE_UNLIT
+#define SG_PHONG 1     // only added iff shadeMode == SG_SHADE_PHONG
+\endcode
+
+If textures, vertex colors and or lighting is enabled in the descriptor, these defines are specified in the shader.
+\code
+#define SG_TEXTURED 1      // only added iff textured
+#define SG_VERTEX_COLOR 1  // only added iff vertex colors are used
+#define SG_NORMALS 1       // only added iff lighting is enabled  ( shadeMode != SG_SHADE_UNLIT )
+\endcode
+
+
+Additionally the light setup is passed to the shader with the following defines.
+\code
+#define SG_NUM_LIGHTS N  // N = numLights
+#define SG_LIGHT_TYPE_X Y // type of light X where X = 0,...,N-1 and  Y = SG_LIGHT_DIRECTIONAL,SG_LIGHT_POINT,SG_LIGHT_SPOT
+\endcode
+
+
+Furthermore, there are stage-independent IO defines for default vertex attribute IO.
+It is recommended to make use of these, instead of using the direct names.
+\code
+SG_INPUT_POSOS        // input object space position 
+SG_INPUT_POSVS        // input view space position 
+SG_INPUT_POSCS        // input clip space position
+SG_INPUT_NORMALOS     // input object space normal
+SG_INPUT_NORMALVS     // input view space normal
+SG_INPUT_TEXCOORD     // input texcoord
+SG_INPUT_VERTEXCOLOR  // input vertex color
+
+SG_OUTPUT_X           // output corresponding to SG_INPUT_X,  ie. SG_OUTPUT_POSOS ..
+\endcode
+
+
+Request defines provided by shader modifiers or templates.
+Add these somewhere at the beginning of the shader.
+
+\code
+SG_REQUEST_POSOS        // shader requires object space position 
+SG_REQUEST_POSVS        // shader requires view space position 
+SG_REQUEST_NORMALOS     // shader requires object space normal
+SG_REQUEST_NORMALVS     // shader requires view space normal
+SG_REQUEST_TEXCOORD     // shader requires texcoord
+SG_REQUEST_VERTEXCOLOR  // shader requires vertex color
+\endcode
+
+\section shaderUniforms Default uniforms
+
+The following default uniforms are guaranteed to be added to any generated shader:
+
+\code
+mat4 g_mWVP;         // proj * view * world matrix
+mat4 g_mWV;          // modelview matrix
+mat3 g_mWVIT;        // inverse transpose of modelview, used to transform direction vectors such as normals
+mat4 g_mP;           // projection matrix
+
+vec3 g_vCamPos;      // camera position in world space
+vec3 g_vCamDir;      // camera view direction in world space
+
+vec3 g_cDiffuse;     // diffuse color of material
+vec3 g_cAmbient;     // ambient color of material
+vec3 g_cEmissive;    // emissive color of material
+vec3 g_cSpecular;    // specular color of material
+vec4 g_vMaterial;    // other material parameters: vec4(shininess, alpha, 0, 0) 
+\endcode
+
+The light configuration is added to a shader if it is supposed to do lighting.
+If the shader descriptor defines that lighting has to be done via gouraud or flat shading, 
+these are added to the vertex shader.
+Othwerise, in phong shading these are included in the fragment shader.
+
+\code
+vec3 g_cLightDiffuse_X;   // diffuse color of light X
+vec3 g_cLightAmbient_X;   // ambient color of light X
+vec3 g_cLightSpecular_X;  // specular color of light X
+\endcode
+
+additionally for directional lights:
+\code
+vec3 g_vLightDir_X;       // light direction in view space
+\endcode
+
+additionally for point lights:
+\code
+vec3 g_vLightPos_X;       // light position in view space
+vec3 g_vLightAtten_X;     // distance attentuation factors: vec3(linear, quadratic, cubic) 
+\endcode
+
+additionally for spot lights:
+\code
+vec3 g_vLightPos_X;       // light position in view space
+vec3 g_vLightDir_X;       // light direction in view space
+vec3 g_vLightAtten_X;     // distance attentuation factors: vec3(linear, quadratic, cubic) 
+vec2 g_vLightAngleExp_X;  // angle attenuation factors: vec2(cutoff angle, exponent)
+\endcode
+
+where X is replaced by the light index in range[0,.., numLight-1].
+
+
+TextureSampler uniforms for a fragment shader are generated based on the number of specified textures in ShaderGenDesc:
+
+\code
+samplerY g_TextureX;  // X: texture stage id = 0,...,numTextures-1   Y: samplerType ie.  1D, 2D, Cube, 2DRect..
+\endcode
+
+
+ShaderModifiers can add custom uniforms to a generated shader.
+
+
+\section ShaderAttributeIO Shader attribute IO
+
+Custom attributes have to be handled manually and are ignored by the generator.
+In contrast, default attributes consisting of position, normal, texcoord and vertexcolor 
+can be conveniently accessed via the SG_INPUT_X, SG_OUTPUT_X defines.
+Default attributes can be requested in a template or modifier via the SG_REQUEST_X defines.
+It does not matter in what stage the attribute request is defined; the attribute will be available in all stages.
+In general, all used default attributes in a program are passed down from the vertex shader through all following stages.
+The fragment shader has only one default output though: vec4 outFragment!
+Also, they are passed down without modifications from the vertex-shader; that is, if not done explicitly by a modifier or template afterwards.
+
+However, this is difficult for geometry and tessellation shaders due to their freedom of having multiple inputs or outputs.
+There is a convenience attribute mapping function sg_MapIO() to help with this problem for each of these stages, 
+which maps all default inputs to their corresponding outputs without any modifications.
+
+The implementation of this function looks as follows for each stage:
+
+Geometry shader:
+\code
+void sg_MapIO(int inIdx)
+{
+  gl_Position = gl_in[inIdx].gl_Position;
+  gl_PrimitiveID = gl_PrimitiveIDIn;
+  SG_OUTPUT_X = gl_in[inIdx].SG_INPUT_X
+}
+\endcode
+
+Tess-control shader:
+\code
+void sg_MapIO(int inIdx)
+{
+  gl_out[gl_InvocationID].gl_Position = gl_in[inIdx].gl_Position;
+  gl_out[gl_InvocationID].SG_OUTPUT_X = gl_in[inIdx].SG_INPUT_X
+}
+\endcode
+
+Tess-evaluation shader:
+This is somewhat tricky, since there is no "default" way to interpolate.
+Still, there are some helpers for barycentric interpolation for triangle patches and bilinear interpolation for quad patches:
+\code
+void sg_MapIOBarycentric()
+{
+  SG_OUTPUT_X = gl_TessCoord.x * SG_INPUT_X[0] + gl_TessCoord.y * SG_INPUT_X[1] + gl_TessCoord.z * SG_INPUT_X[2];
+  // same for gl_Position
+}
+
+void sg_MapIOBilinear()
+{
+  // bilerp for SG_OUTPUT_X <- SG_INPUT_X[0..3] by gl_TessCoord.xy
+  // same for gl_Position
+}
+\endcode
+
+Full flexibility for the interpolation stage is possible with special keywords ("SG_INPUT", "SG_OUTPUT") recognized by the generator exclusively for the tess-eval stage:
+However, this only works if the whole instruction does not exceed more than a single line of code.
+
+For instance, a barycentric interpolation of default attributes in a triangle can also be expressed as:
+\code
+SG_OUTPUT = gl_TessCoord.x * SG_INPUT[0] + gl_TessCoord.y * SG_INPUT[1] + gl_TessCoord.z * SG_INPUT[2];
+\endcode
+The generator then replaces the SG_OUTPUT, SG_INPUT keywords with each available default attribute.
+
+
+Example 1: Displace vertices along normals in a vertex shader
+
+\code
+// this is a vertex shader template!
+#define SG_REQUEST_NORMALOS
+
+uniform float factor;
+
+void main()
+{
+  SG_VERTEX_BEGIN;
+  SG_VERTEX_END;
+  vec4 newPosOS = SG_INPUT_POSOS + vec4(SG_INPUT_NORMALOS, 0) * factor;
+  vec4 newPosCS = g_mWVP * newPosOS;
+  SG_OUTPUT_POSCS = gl_Position = newPosCS;
+  #ifdef SG_OUTPUT_POSVS
+  SG_OUTPUT_POSVS = g_mWV * newPosOS;
+  #endif
+  #ifdef SG_OUTPUT_POSOS
+  SG_OUTPUT_POSOS = newPosOS;
+  #endif
+}
+\endcode
+
+
+Example 2: Write color-encoded normals in a fragment shader
+
+Object-space normals have to be requested here!
+This example is implemented as a modifier for a change:
+
+\code
+void modifyVertexIO(ACG::ShaderGenerator* _shader)
+{
+  _shader->addDefine("SG_REQUEST_NORMALOS");
+}
+
+void modifyFragmentEndCode(QStringList* _code)
+{
+  _code->push_back("outFragment = vec4(normalize(SG_INPUT_NORMALOS) * 0.5 + 0.5, 1);");
+}
+\endcode
+
+
+
+\section ShaderTemplates Shader Templates
+
+A shader template is glsl code with additional keywords that are interpreted by the shader generator.
+
+Apart from the previously mentioned default defines, additional keywords are:
+
+\code
+
+SG_VERTEX_BEGIN
+SG_VERTEX_END
+SG_FRAGMENT_BEGIN
+SG_FRAGMENT_END
+
+\endcode
+
+These keywords are location markers, where generated begin- or endcode of the vertex/fragment shader should be generated.
+However, it is not necessary to use them if the user wants to perform manual lighting and texturing etc.
+Templates for the tessellation and geometry stage do not have any exclusive keywords, 
+but they can make use of defines, IO keywords and the mapping functions as described in the "Shader Attribute IO" section.
+
+The vertex shader template without any user defined behaviour is:
+
+\code
+void main()
+{
+  SG_VERTEX_BEGIN;
+  SG_VERTEX_END;
+}
+\endcode
+
+Likewise, the fragment shader without special behaviour is:
+
+\code
+void main()
+{
+  SG_FRAGMENT_BEGIN;
+  SG_FRAGMENT_END;
+}
+\endcode
+
+
+\section vertShaderGen Vertex shader code generation
+
+Some parts of a generated shader contain fixed code snippets, which are assembled according to specification in ShaderGenDesc.
+
+
+A vertex shader has the following code layout.
+
+\code
+void main(){
+
+// ============================================================
+// Generated begin code:
+// read inputs from vertex buffer and initialize generated local variables
+vec4 sg_vPosPS = g_mWVP * inPosition;  // transform pos to projection space
+vec4 sg_vPosVS = g_mWV * inPosition;   // transform pos to view space
+
+vec4 sg_cColor = vec4(g_cEmissive, ALPHA); // color  (ALPHA: #define ALPHA g_vMaterial.y)
+
+vec3 sg_vNormalVS = vec3(0,1,0); // unknown vertex normal at this point
+
+#if SG_NORMALS
+sg_vNormalVS = normalize(g_mWVIT * inNormal); // transform normal to view space
+#endif
+
+#if SG_TEXTURED
+vecX sg_vTexCoord = inTexCoord;
+#endif
+
+#if SG_VERTEX_COLOR
+sg_cColor = inColor;
+#endif
+
+#if SG_GOURAUD or SG_FLAT
+sg_cColor += lightingCode();
+#endif
+
+// ============================================================
+
+
+// Your ShaderModifier adds vertex shader code here.
+// The modifier may overwrite any local variables from the shader generator.
+for each modifier:
+ modifier->modifyVertexBeginCode();
+
+// ============================================================
+// Generated end code: pass local variables to next shader stage
+gl_Position = sg_vPosPS;
+outVertexPosCS = sg_vPosPS;
+
+#if SG_TEXTURED
+outVertexTexCoord = sg_vTexcoord;
+#endif
+
+#if SG_GOURAUD or SG_FLAT or SG_VERTEX_COLOR
+outVertexColor = sg_cColor;
+#endif
+
+#if SG_PHONG
+outVertexNormal = sg_vNormalVS;
+outVertexPosVS = sg_vPosVS;
+#endif
+
+// ============================================================
+
+// Shader modifiers are called again for the end code snippet.
+// The modifers may write to gl_Position, outVertexNormal etc. and/or custom outputs
+for each modifier:
+ modifier->modifyVertexEndCode();
+}
+\endcode
+
+\note Note that if directives are not generated at all if they do not change the compiled code.
+
+\section geomShaderGen Tessellation/Geometry shader code generation
+
+Tessellation and geometry shaders have a different layout and due to their complexity, there is no clear begin or end code marker for these shaders.
+The ShaderProgGenerator does not generate a main() function in these cases.
+However, it provides a convenient passthrough mapping function sg_MapIO() for default attribute IO.
+The sg_MapIO function can be called in a geometry shader template.
+The rest of the shader including the main() body has to be provided in form of a template file.
+
+
+\section fragShaderGen Fragment shader generation
+
+Fragment shaders are assembled similar to vertex shaders:
+
+\code
+void main(){
+
+// ============================================================
+// Generated begin code:
+// read inputs from vertex/geometry shader:
+vec4 sg_vPosCS = outVertexPosCS; // or outGeometryPosCS
+vec2 sg_vScreenPos = sg_vPosCS.xy / sg_vPosCS.w * 0.5 + vec2(0.5, 0.5); // projective texture coordinates
+
+vec4 sg_cColor = vec4(g_cEmissive, ALPHA); // color  (ALPHA: #define ALPHA g_vMaterial.y)
+
+
+#if SG_GOURAUD or SG_FLAT or SG_VERTEX_COLOR
+sg_cColor += outVertexColor;  // or outGeometryColor
+#endif
+
+#if SG_PHONG
+vec4 sg_vPosVS = outVertexPosVS;
+vec3 sg_vNormalVS = outNormal;
+sg_cColor += lightingCode();
+#endif
+
+#if SG_TEXTURED
+vec4 sg_cTex = 0;
+for each texture stage X:
+  sg_cTex += texture(g_TextureX, outVertexTexCoord); // additive combine texture stages
+  
+#if SG_UNLIT
+sg_cColor += sg_cTex; // additive blending
+#else
+sg_cColor *= sg_cTex; // multiplicative blending
+#endif
+#endif
+
+#if 
+sg_cColor = inColor;
+#endif
+
+
+// ============================================================
+
+
+// Your ShaderModifier adds fragment shader code here.
+// The modifier may overwrite any local variables from the shader generator.
+for each modifier:
+ modifier->modifyFragmentBeginCode();
+
+// ============================================================
+// Generated end code: pass color to output
+
+outFragment = sg_cColor;
+
+// ============================================================
+
+// Shader modifiers are called again for the end code snippet.
+// The modifers may write to outFragment, and/or custom outputs
+for each modifier:
+ modifier->modifyFragmentEndCode();
+
+
+}
+\endcode
+
+
+
+\section lightingCode Lighting code generation
+
+The ShaderGenerator implements a forward lighting routine that supports any number of lights (within hardcoded SG_MAX_SHADER_LIGHTS limit) and any combination of light types.
+However, it is possible to extend or even completely replace the default lighting routine with ShaderModifiers.
+
+The default lighting routine performs the following steps.
+
+\code
+#for each light X:
+
+  #if X is directional:
+    sg_cColor += LitDirLight(sg_vPosVS, sg_vNormalVS, g_vLightDir_X, ..);
+  #else if X is point light:
+    sg_cColor += LitPointLight(sg_vPosVS, sg_vNormalVS, g_vLightPos_X, ..);
+  #else if X is spot light:
+    sg_cColor += LitSpotLight(sg_vPosVS, sg_vNormalVS, g_vLightPos_X, g_vLightDir_X, ..);
+    
+\endcode
+
+A ShaderModifier can now choose to keep, extend or completely replace the lighting routine provided by the generator.
+Keep in mind that since modifiers simply add more shader code to the existing routine, only commutative operations are supported correctly.
+
+The modifyLightingCode function of a modifier receives a light index [0,...,numLights-1] and a light type [directional,point,spot] as arguments
+and is supposed to compute a lighting color based on the uniforms provided by the generator.
+
+Refer to the toon renderer plugin for an example, that implements custom cel lighting functions with a modifier.
+
+
+Finally, it is possible to perform default lighting in the fragment shader template via the SG_FRAGMENT_LIGHTING keyword.
+\code
+SG_FRAGMENT_BEGIN;
+sg_vNormalVS = g_mWV * (mTangentSpace * vNormalTS); // dot3
+sg_cColor = vec4(g_cEmissive, SG_ALPHA);
+SG_FRAGMENT_LIGHTING;
+SG_FRAGMENT_END;
+\endcode
+
+\section shaderFlowDiagrams Shader Data Flow Diagrams
+
+\subsection shader_building_blocks Shader Building Blocks
+\image html Blocks.svg  
+
+\subsection shader_IO Shader IO
+\image html ShaderIO.svg  
+
+\subsection shader_geometry_shader Geometry Shader  
+\image html GeometryShader.svg  
+
+\subsection shader_tesselation_control Tesselation Control Shader
+\image html TessControl.svg  
+
+\subsection shader_tesselation_evaluation Tesselation Evaluation Shader
+\image html TessEval.svg
+ 
+
+
+
+
+*/

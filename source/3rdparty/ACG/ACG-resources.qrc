@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="ACG">
+        <file>Icons/PrincipalAxis_CS1.png</file>
+        <file>Icons/PrincipalAxis_CS2.png</file>
+        <file>Icons/PrincipalAxis_CS3.png</file>
+    </qresource>
+</RCC>

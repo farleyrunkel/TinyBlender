@@ -8,6 +8,7 @@
 #include "mainwindow.h"
 #include "baseinterface.h"
 
+typedef unsigned int DataType;
 
 class Core : public QObject
 {
@@ -24,6 +25,9 @@ private:
 
     void loadPlugin(QObject* thePlugin);
 
+    void slotAddEmptyObject(int theType, int& theId);
+
+    int addEmptyObject(DataType _type);
 
 	void setupConnections();
 

@@ -1,0 +1,404 @@
+/** \page NonFixedPipelinePage The non-fixed OpenGL rendering pipeline
+
+The ACG library supports two different approaches to rendering the scenegraph: direct fixed-function based and data-driven.
+This page focuses on how to make use of the latter.
+The data-driven approach makes it possible to have complete control over the rendering pipeline in a custom render-plugin.
+
+\section baseNode The BaseNode in the Scenegraph
+
+Every node in the scenegraph is able to provide the renderer with data by creating RenderObject.
+A RenderObject is a collection of data, which is necessary to execute a draw-call.
+This data consists of information about: shaders, textures, uniforms, OpenGL-states, vertex-layout, vertex buffer etc.
+These RenderObjects are created in the getRenderObjects() function of a node.
+Finally, a node is not supposed to execute draw-calls on its own in getRenderObjects(), but should only provide render-object data.
+
+
+\section iRenderer The IRenderer interface
+
+Custom render plugins for the data-driven rendering approach have to implement the IRenderer interface.
+This interface provides basic functionality such as collecting render-object data from the scenegraph and executing a draw-call for a render-object.
+
+\subsection renderObject Defining RenderObjects
+
+This is the collection of rendering-data that is necessary for a draw-call.
+It should be noted that any memory addresses set to a RenderObject have to remain valid until used in the render-plugin.
+Thus, addresses set in the getRenderObjects() method should point to permanent data in the heap, not to local data in the stack!
+
+Typically, RenderObjects are initialized somewhat similar to the following manner.
+
+\code
+RenderObject ro;
+ro.initFromState(&_state);                 // copy opengl-states and transforms from GLState
+ro.depthTest = true;                       // force depth-testing
+ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;  // disable lighting
+ro.emissive = Vec3f(1.0f, 1.0f, 1.0f);     // base color
+
+ro.vertexBuffer = myVBO;       // vertex/index buffer
+ro.indexBuffer = myIBO;
+ro.vertexDecl = myVertexDecl;  // vertex layout
+ro.glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);  // same as glDrawElements, but does not execute draw-call! stores data only instead
+
+_renderer->addRenderObject(&ro);
+\endcode
+
+
+\section vertexDeclaration Defining the layout of a vertex element
+The VertexDeclaration class is used to specify the layout of a vertex element (VertexElement)
+
+\section shaderGenerator Generating GLSL shaders
+
+The \subpage ShaderGenerator_page class can be used to generate default GLSL shader code.
+It is possible to have the complete shader generated with typical shading options such as phong or flat shading.
+Alternatively the main function can be fully customized via template files or ShaderModifiers.
+Template files are specified in ShaderGenDesc::vertexTemplateFile and ShaderGenDesc::fragmentTemplateFile and 
+they extend the generated code by a user defined main function. Shader vertex I/O attributes and uniforms can also be
+user defined; however, make sure that there is no name conflict with the generated shader code.
+Example: A vertex offset operation based on normals is accomplished with the following template file:
+\code
+void main()
+{
+  // default vertex transforms are handled by the generator by replacing the SG_VERTEX_BEGIN with generated code
+  SG_VERTEX_BEGIN
+  
+#ifdef SG_NORMALS
+  sg_vPosPS = g_mWVP * (inPosition + vec4(inNormal, 0));
+#endif
+  
+  SG_VERTEX_END
+}
+\endcode
+
+But templates are optional and are not needed to generate shaders for mimicking the fixed function pipeline.
+Alternatively, ShaderModifiers are useful for global shading effects which only change few code lines
+and are also combinable with each other allowing a more dynamic shader customization.
+The Depth-Peeling renderer shows how to use these modifiers.
+
+
+\subsection vertexAttributes Adding custom vertex attributes
+
+The complete vertex layout is defined by creating a VertexDeclaration object. 
+Standard attributes are: position, normal, texture coordinate and color.
+These attributes are marked with their corresponding ACG::VERTEX_USAGE qualifier and have a predefined variable name in the vertex shader input:
+Their variable names are predefined as "inPosition", "inNormal", "inTexCoord" and "inColor".
+
+Custom attributes have to be declared with the ACG::VERTEX_USAGE_SHADER_INPUT qualifier as follows:
+
+\code
+vertexDeclaration.addElement(GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, byte_offset, "inCustomParams");
+\endcode
+
+This vertex declaration is then used with the render object.
+The vertex shader can now make use of the additional attributes by using the same variable name as in the vertex declaration.
+In this case the vertex shader would use the attribute like this:
+
+\code
+in vec4 inCustomParams;
+
+void main()
+{
+  SG_VERTEX_BEGIN;
+  
+  // do something with inCustomParams ..
+  
+  SG_VERTEX_BEGIN;
+}
+\endcode
+
+
+Furthermore, attribute can be passed through to the next shader stage.
+This has to be done manually and it must be guaranteed that the variable names do not clash with the keywords used by the ShaderGenerator:
+
+\code
+in vec4 inCustomParams;
+out vec4 v2f_CustomParams; // make v2f_CustomParams available in fragment shader for example
+
+void main()
+{
+  SG_VERTEX_BEGIN;
+  
+  // do something with inCustomParams ..
+  
+  v2f_CustomParams = inCustomParams;
+  
+  SG_VERTEX_BEGIN;
+}
+\endcode
+
+Note that the vertex shader can be modified to accept the new attributes either with a shader modifier or a shader template file.
+
+\subsection shaderCache The Shader Cache
+The Shader Cache singleton class should be used to manage the used shaders. You can query a shader
+from the cache via a shader description. If it is already available, it will be returned from
+the cache. Otherwise, it is compiled and linked. This ensures more efficient and
+redundancy free shader management. ( ACG::ShaderCache )
+
+
+\subsection glslShader The GLSL Shader
+The Shader class is a helper class for building and using GLSL programs
+
+
+\subsection Draw Modes
+
+A DrawMode is a set of properties that describe how to present an object (i.e. wireframe, textured, flat-shaded...).
+There are two types of Drawmodes: bitflags and property-based.
+Bitflags are a combination of predefined Drawmodes such as SOLID_SMOOTH_SHADED and WIREFRAME.
+Afterwards it can be tested with the bitwise & operator whether it contains such an atomic DrawMode.
+
+Property-based draw modes use a different approach by defining a set of properties for an atomic DrawMode.
+These settings are stored in the DrawModeProperties structure.
+Support for combined drawmodes is possible by adding a new layer for each atomic drawmode.
+Each layer is represented by one atomic DrawModeProperties structure.
+Initially each property-based draw mode consists of exactly one layer which is equivalent to an atomic draw mode.
+If we also want to render the wireframe or halfedge representation of an object in combination with a solid mode,
+we can fill out a DrawModeProperties struct for that purpose and call DrawMode::addLayer() to combine wireframe and solid mode.
+
+A scenegraph node can iterate over each layer of a Drawmode via getNumLayers() and getLayer()
+and draw its object according to the properties of that layer.
+
+Example:
+Draw with gouraud shading:
+
+\code
+DrawModeProperties props;
+props.lightStage(LIGHTSTAGE_SMOOTH); // lighting should be done in vertex shader
+props.normalSource(NORMAL_PER_VERTEX); // use smooth vertex normals
+
+drawMode.setDrawModeProperties(props); // assign to layer 0
+\endcode
+
+
+Draw with phong lighting:
+
+\code
+DrawModeProperties props;
+props.lightStage(LIGHTSTAGE_PHONG); // lighting should be done in fragment shader
+props.normalSource(NORMAL_PER_VERTEX); // use smooth vertex normals
+
+drawMode.setDrawModeProperties(props); // assign to layer 0
+\endcode
+
+
+Draw with flat shading and wireframe (2 layers):
+
+\code
+// define flat shading properties
+DrawModeProperties props;
+props.lightStage(LIGHTSTAGE_SMOOTH); // lighting should be done in vertex shader
+props.normalSource(NORMAL_PER_FACE); // use per face normals
+
+drawMode.setDrawModeProperties(props); // assign flat shading to layer 0
+
+// define unlit properties for wireframe rendering
+props.primitive(PRIMITIVE_WIREFRAME); // use wireframe instead of solid faces
+props.lightStage(LIGHTSTAGE_UNLIT); // no lighting 
+
+drawMode.addLayer(&props); // assign wireframe to layer 1
+\endcode
+
+The object is then rendered in two passes (one for each layer) with different shader programs.
+Note that the light stage tells the shader generator whether to do the lighting in vertex or fragment shader or to skip it entirely.
+Then a combination of lighting functions are added to the shader code based on the light configuration in the ShaderGenDesc structure.
+
+Example based on a DIRECTIONAL, DIRECTIONAL, POINTLIGHT configuration:
+\code
+sg_cColor.xyz += LitDirLight(sg_vPosVS.xyz, sg_vNormalVS, g_vLightDir_0,  g_cLightAmbient_0,  g_cLightDiffuse_0,  g_cLightSpecular_0);
+sg_cColor.xyz += LitDirLight(sg_vPosVS.xyz, sg_vNormalVS, g_vLightDir_1,  g_cLightAmbient_1,  g_cLightDiffuse_1,  g_cLightSpecular_1);
+sg_cColor.xyz += LitPointLight(sg_vPosVS.xyz, sg_vNormalVS,  g_vLightPos_2,  g_cLightAmbient_2,  g_cLightDiffuse_2,  g_cLightSpecular_2, g_vLightAtten_2);
+\endcode
+
+
+
+\section creating_new_renderer_plugins Creating new renderer plugins
+
+The rendering pipeline is fully customizable via external plugins.
+Each shader-based renderer is represented by a subclass of RenderInterface and ACG::IRenderer, 
+where RenderInterface enables the renderer to be selected in the viewport of OpenFlipper (right-click on coordinate-axis -> Renderers -> "renderer-name").
+and ACG::IRenderer provides the connection of scenegraph-nodes to the renderer.
+Additionally further helper-functions are already implemented in IRenderer such as
+the collection and sorting of RenderObjects and basic rendering procedures of RenderObjects,
+but the scene rendering routine must be implemented in the plugin.
+Plugin-Render-ShaderPipeline is a minimal example of a simple rendering-plugin.
+
+Rendering code is implemented in the render() function inherited by RenderInterface and should always look like this:
+
+\code
+void Renderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties)
+{
+  // collect renderobjects + prepare OpenGL state
+  prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
+
+  // render every object
+  for (int i = 0; i < getNumRenderObjects(); ++i)
+    renderObject( getRenderObject(i) );
+
+  // restore common opengl state
+  // log window remains hidden otherwise
+  finishRenderingPipeline();
+}
+\endcode
+
+
+The code begins and ends by calling prepareRenderingPipeline() and finishRenderingPipeline() 
+which are helper-functions of IRenderer.
+Here, prepareRenderingPipeline traverses the scenegraph to collect render-objects and sorts them
+by priority in ascending order.
+The sorted list of renderobjects can be accessed via getRenderObject().
+Another helper function: renderObject() prepares OpenGL states (vertex/index source, boolean glEnable states..), 
+sets shader uniforms according the data in the RenderObject structure and executes the draw call of a RenderObject.
+Furthermore it is possible to force the use of a shader or disallow any changes made via glEnable/glDisable
+by specifying the 2nd and 3rd parameter of renderObject().
+Note that renderObject() is only a helper-function and may also be ignored and implemented on your own.
+Finally, finishRenderingPipeline() resets the OpenGL state machine such that it does not
+interfere with following draw-calls made by Qt.
+
+The advantage of this data-driven design is that a custom render-plugin has complete control over the scene-rendering.
+For instance, it is possible to setup custom shaders, modify provided shaders, perform multiple render-passes into custom FBOs etc.
+If custom FBOs are used in a renderer, the input FBO can be easily restored by calling restoreInputFbo().
+Also, the input FBO should not be cleared by a render-plugin, as this is done already by OpenFlipper!
+
+
+
+
+
+The depth-peeling renderer plugin is a more complex example, but showcases the flexibility of the renderer interface.
+It makes use of global shader effects which are fully integrated to the shader-generation pipeline.
+Only small changes to an existing shader have to be made in order to implement depth peeling and
+thus the concept of ShaderModifiers is used here.
+Take a look at the PeelShaderModifier for example:
+
+\code
+class PeelLayerModifier : public ShaderModifier
+{
+public:
+
+
+  void modifyFragmentIO(ShaderGenerator* _shader)
+  {
+    _shader->addUniform("sampler2D g_DepthLayer");
+  }
+
+  void modifyFragmentBeginCode(QStringList* _code)
+  {
+    // compare current depth with previous layer
+    _code->push_back("float dp_prevDepth = texture(g_DepthLayer, sg_vScreenPos).x;");
+    _code->push_back("if (gl_FragCoord.z <= dp_prevDepth) discard;");
+  }
+
+  void modifyFragmentEndCode(QStringList* _code)
+  {
+    _code->push_back("outFragment = vec4(sg_cColor.rgb * sg_cColor.a, sg_cColor.a);");
+  }
+
+  static PeelLayerModifier instance;
+};
+\endcode
+
+Applying this modifier to the shader generator will result in a new uniform in the
+fragment shader (sampler2D g_DepthLayer) and a slightly modified fragment shader.
+modifyFragmentBeginCode() adds shader-code before the fragment lighting stage and 
+modifyFragmentEndCode() adds shader-code at the end of the main() function of the shader.
+Obviously, these code excerpts have to comply to the naming convention of the shader-generator.
+
+We have to register each modifier to the shader generator:
+
+\code
+ShaderProgGenerator::registerModifier(&PeelLayerModifier::instance);
+\endcode
+
+Later in the render() function we can make use of this modifier via getProgram() of ShaderCache:
+
+\code
+GLSL::Program* peelProg = ShaderCache::getInstance()->getProgram(&sortedObjects_[k]->shaderDesc, PeelLayerModifier::instance);
+peelProg->use();
+peelProg->setUniform("g_DepthLayer", 4);
+
+renderObject(sortedObjects_[k], peelProg, true);
+\endcode
+
+Multiple shader modifiers can be applied to one shader, but the order of modifiers is undefined.
+
+\code
+ShaderCache::getInstance()->getProgram(&shaderDesc, ModifierA_ID | ModifierB_ID);
+\endcode
+
+\section shader_template_files Shader template files
+
+Shader generation can be controlled with shader template files.
+These template files contain custom shader code and are later extended by the ShaderGenerator.
+Obviously, only one template at a time can be used by the ShaderGenerator, so render-plugins
+should prefer modifiers to retain combinational flexibility.
+
+
+Example template:
+The depth-peeling effect can also be achieved with templates instead of shader-modifiers.
+
+\code
+// declare custom uniforms
+uniform sampler2D g_DepthLayer;
+
+// the generator takes care of all essential uniforms
+
+void main()
+{
+  // At first, the generator calculates sg_vScreenPos and sg_cColor for us here
+  SG_FRAGMENT_BEGIN; // begin code marker, insert generated code here
+
+  
+  
+  // customized peeling code
+  float dp_prevDepth = texture(g_DepthLayer, sg_vScreenPos).x;
+  if (gl_FragCoord.z <= dp_prevDepth) discard;
+
+  
+  // end of fragment shader
+  SG_FRAGMENT_END; // end code marker
+
+  
+  // overwrite color output of generator for peel-layer blending
+  outFragment = vec4(sg_cColor.rgb * sg_cColor.a, sg_cColor.a);
+}
+\endcode
+
+Assume that this template file is stored at  ShaderDir/DepthPeeling/peelLayer.template,
+then the peel shader is assembled as follows:
+
+\code
+// QString to fragment shader template
+QString qstrInitTemplate = OpenFlipper::Options::shaderDirStr() + QDir::separator() + QString("DepthPeeling/peelLayer.template");
+
+// make temp-copy of ShaderGenDesc 
+ShaderGenDesc peelDesc = sortedObjects_[k]->shaderDesc;
+
+// specify template string
+std::string strTemplateFile = qstrInitTemplate.toStdString();
+peelDesc.fragmentTemplateFile = strTemplateFile.c_str();
+
+// query shader-program from cache
+GLSL::Program* peelProg = ShaderCache::getInstance()->getProgram(&peelDesc);
+\endcode
+
+Keep in mind that this technique eventually overwrites any template set by scenegraph-nodes.
+
+
+\section vci_debugging_tips_and_tricks Debugging tips and tricks
+
+
+The most important function for debugging dumpRenderObjects() is provided by ACG::IRenderer.
+This can be called after call to prepareRenderingPipeline() and it creates a text file
+containing a full data dump of all render objects with all states and shader codes for each.
+You can just call the dumpRenderObjectsToTexxt() function with a filename and a pointer to the
+sortedObjects_.
+
+Often encountered errors:
+- lighting disabled in ShaderGenDesc and black emission color (use different emission color)
+- wrong depth-buffer states
+- color write disabled
+- wrong vertex declaration format
+- temporary vertex declaration (it should be a static or member variable)
+   The address set to the render object has to be valid after the call to getRenderObject().
+
+
+If the whole scene seems to be rendered wrong, it is possible that one draw-call causes problems in the OpenGL state machine.
+Try to render only a selection of renderobjects until the problematic one is found.
+
+*/
