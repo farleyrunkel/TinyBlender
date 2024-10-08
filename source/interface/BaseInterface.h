@@ -5,8 +5,13 @@
 #include <QString>
 #include <QtPlugin>
 
+#include "core/signal.h"
+
 class BaseInterface 
 {
+
+public:
+    virtual ~BaseInterface() {}
 
 public:
 
@@ -17,7 +22,7 @@ public:
     virtual void pluginsInitialized() {};
 
 public:
-    virtual ~BaseInterface() {}
+    signal <void()> toUpdateView;
 };
 
 

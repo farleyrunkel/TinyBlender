@@ -1,4 +1,4 @@
-#include "graphicsview.h"
+#include "core/graphicsview.h"
 
 #include <QResizeEvent>
 

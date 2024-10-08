@@ -5,8 +5,8 @@
 #include <QSplashScreen>
 #include <QPluginLoader>
 
-#include "mainwindow.h"
-#include "baseinterface.h"
+#include "core/mainwindow.h"
+#include "interface/baseinterface.h"
 
 typedef unsigned int DataType;
 
@@ -25,9 +25,9 @@ private:
 
     void loadPlugin(QObject* thePlugin);
 
-    void slotAddEmptyObject(int theType, int& theId);
+    void onAddEmptyObject(QString, int& theId);
 
-    int addEmptyObject(DataType _type);
+    int addEmptyObject(QString _type);
 
 	void setupConnections();
 

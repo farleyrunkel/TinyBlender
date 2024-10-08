@@ -6,16 +6,18 @@
 #include <QTimer>
 #include <QApplication>
 #include <QThread>
+#include <QMetaType>
 
 #include <boost/bind.hpp>
 
-#include "settings.h"
-#include "options.h"
+#include "core/settings.h"
+#include "core/options.h"
 
-#include "baseinterface.h"
-#include "menuinterface.h"
-#include "TypeInterface.h"
+#include "interface/baseinterface.h"
+#include "interface/menuinterface.h"
+#include "interface/fileinterface.h"
 
+#include "common/objectfactory.h"
 
 Core::Core(QObject* theParent)
     : QObject(theParent),
@@ -81,21 +83,20 @@ void Core::loadPlugin(QObject* thePlugin) {
         aMenuPlugin->signalGetRibbonCategory.connect(boost::bind(&MainWindow::slotGetRibbonCategory, myMainWindow, _1, _2, _3));
     }
 
-
-    TypeInterface* LoadSavePlugin = qobject_cast<TypeInterface*>(thePlugin);
-    if (LoadSavePlugin) {
-        LoadSavePlugin->signalAddEmptyObject.connect(boost::bind(&Core::slotAddEmptyObject, this, _1, _2));
+    FileInterface* aFilePlugin = qobject_cast<FileInterface*>(thePlugin);
+    if (aFilePlugin) {
+        aFilePlugin->toAddEmptyObject.connect(boost::bind(&Core::onAddEmptyObject, this, _1, _2));
     }
 
     emit pluginsInitialized();
  }
 
-void Core::slotAddEmptyObject(int theType, int& theId) {
+void Core::onAddEmptyObject(QString theType, int& theId) {
 
     if (QThread::currentThread() != QApplication::instance()->thread())
     {
         //execute method in main thread
-        QMetaObject::invokeMethod(this, "slotAddEmptyObject", Qt::BlockingQueuedConnection, Q_ARG(DataType, theType), Q_ARG(int*, &theId));
+        QMetaObject::invokeMethod(this, "onAddEmptyObject", Qt::BlockingQueuedConnection, Q_ARG(QString, theType), Q_ARG(int*, &theId));
     }
     else
     {
@@ -104,20 +105,13 @@ void Core::slotAddEmptyObject(int theType, int& theId) {
 }
 
 
-int Core::addEmptyObject(DataType _type) {
-    //// Iterate over all plugins. The first plugin supporting the addEmpty function for the
-    //// specified type will be used to create the new object. If adding the object failed,
-    //// we iterate over the remaining plugins.
+int Core::addEmptyObject(QString _type) {
 
-    //// Iterate over type plugins
-    //for (int i = 0; i < (int)supportedDataTypes_.size(); i++)
-    //    if (supportedDataTypes_[i].type & _type) {
-    //        int retCode = supportedDataTypes_[i].plugin->addEmpty();
-    //        if (retCode != -1)
-    //            return retCode;
-    //    }
+    BaseObject* aObject = ObjectFactory::createObject(_type.toStdString());
 
-    return -1; // no plugin found
+    if (aObject == nullptr) return -1;
+
+    return aObject->id();
 }
 
 

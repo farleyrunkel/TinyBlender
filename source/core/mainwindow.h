@@ -12,7 +12,7 @@
 #include "SARibbonMainWindow.h"
 #include "SARibbonBar.h"
 
-#include "graphicsview.h"
+#include "core/graphicsview.h"
 
 class MainWindow : public SARibbonMainWindow
 {

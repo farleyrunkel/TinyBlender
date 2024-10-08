@@ -2,35 +2,31 @@
 
 #include <QString>
 #include <QStringList>
-#include "signal.h"
+#include "core/signal.h"
 
 typedef unsigned int DataType;
 
-class ObjectInterface
+class ObjectInterface 
 {
 public:
-    virtual ~ObjectInterface() {};
+    virtual ~ObjectInterface() {}
 
 public:
-    virtual void slotFileOpened(int _id) {};
-    virtual void slotAddedEmptyObject(int _id) {};
-    virtual void slotObjectDeleted(int _id) {};
+
+    virtual bool registerType() = 0;
+
+    virtual int addEmpty() = 0;
+
+    virtual DataType supportedType() = 0;
+
+    //  virtual void generateBackup(int _id, QString _name, UpdateType _type) {};
 
 public:
-    // Signals
-    signal <void(int, QString)>             signalSave;
-    signal <void(QString, DataType, int&)>  signalLoad;
-    signal <void(DataType, int&)>           signalAddEmptyObject;
-    signal <void(int, int&)>                signalCopyObject;
-    // Deprecated signal (moved to Type Interface)
-    signal <void(int)>                      signalEmptyObjectAddedDeprecated;
-    signal <void(int)>                      signalDeleteObject;
-    signal <void()>                         signalDeleteAllObjects;
-    signal <void(QStringList&)>             signalGetAllFileFilters;
 
+    signal<void(DataType, int&)> signalAddEmptyObject;
 };
 
-
+// Interface identifier macro
 #define ObjectInterface_iid "TinyBlender.Interface.ObjectInterface"
 
 Q_DECLARE_INTERFACE(ObjectInterface, ObjectInterface_iid)

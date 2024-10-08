@@ -1,24 +1,21 @@
-project(tbcore)
+project(core)
 
-set(MODULE_TBCORE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH "Module core include")
-
-# Recursively find all files
-file(GLOB MODULE_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+# Recursively find all source and header files
+file(GLOB ${PROJECT_NAME}_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
-add_library(${PROJECT_NAME} SHARED
-    ${MODULE_SOURCES})
-
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
-target_link_libraries(${PROJECT_NAME} PRIVATE SARibbonBar)
-
-install(TARGETS ${PROJECT_NAME}
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+file(GLOB ${PROJECT_NAME}_HEADERS
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 )
+
+# Create the library from source files
+add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
+
+# Include header files in the library (for IDEs and clarity)
+target_sources(${PROJECT_NAME} PUBLIC ${${PROJECT_NAME}_HEADERS})
+
+# Specify the include directory for this target
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::OpenGLWidgets)

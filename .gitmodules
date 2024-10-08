@@ -1,3 +1,0 @@
-[submodule "source/3rdparty/OpenMesh"]
-	path = source/3rdparty/OpenMesh
-	url = https://gitlab.vci.rwth-aachen.de:9000/OpenMesh/OpenMesh.git

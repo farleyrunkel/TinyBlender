@@ -5,8 +5,7 @@
 #include <QMenuBar>
 
 #include "SARibbonBar.h"
-#include "signal.h"
-
+#include "core/signal.h"
 
 /// The Menu will be added inside the File Menu
 #define FILEMENU tr("File")

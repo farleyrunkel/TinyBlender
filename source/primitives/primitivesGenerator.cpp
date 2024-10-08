@@ -1,4 +1,4 @@
-#include "primitivesGenerator.h"
+#include "primitives/primitivesGenerator.h"
 
 
 QString PrimitivesGenerator::name() const {

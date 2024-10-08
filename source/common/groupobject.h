@@ -1,34 +1,35 @@
 #ifndef TINYBLENDER_GROUPOBJECT_H
 #define TINYBLENDER_GROUPOBJECT_H
 
-#include "BaseObject.h"
+#include <string>
 
+#include "common/baseobject.h"
+#include "common/objectfactory.h"
 
 class GroupObject : public BaseObject
 {
-    Q_OBJECT
+	
 public:
 
-    GroupObject(const GroupObject& _object) {};
+    GroupObject(const GroupObject& _object) :
+        BaseObject(_object) {}
 
-
-    /** constructor
-     *
-     * @param _groupName Name of the new Group object
-     * @param _parent    The parent object of this object
-     */
-    GroupObject(QString _groupName = "Group", GroupObject* _parent = 0) {};
+    GroupObject(QString _groupName = "Group", GroupObject* _parent = 0) :
+        BaseObject(_parent) {}
 
     /// destructor
-    virtual ~GroupObject() {};
+    virtual ~GroupObject() {}
 
-    /** return a full copy of this object. The object will not be a part of the object tree.
-     *  This has to be done with the setParent() function.
-     */
-    BaseObject* copy() {};
+    std::string name() const override { return autoRegister; }
 
-
+private:
+    static std::string autoRegister;  // Static variable for automatic registration
 };
 
+// Static variable definition with lambda for automatic registration
+std::string GroupObject::autoRegister = [](const std::string& name) {
+    ObjectFactory::registerObject(name, []()->BaseObject* {return new GroupObject; });
+    return name;
+    }("GroupObject");
 
 #endif // TINYBLENDER_GROUPOBJECT_H
