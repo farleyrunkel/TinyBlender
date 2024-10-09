@@ -1,4 +1,4 @@
-project(core)
+project(Core)
 
 # Recursively find all source and header files
 file(GLOB ${PROJECT_NAME}_SOURCES
@@ -11,6 +11,7 @@ file(GLOB ${PROJECT_NAME}_HEADERS
 
 # Create the library from source files
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
+add_library(TB::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 # Include header files in the library (for IDEs and clarity)
 target_sources(${PROJECT_NAME} PUBLIC ${${PROJECT_NAME}_HEADERS})

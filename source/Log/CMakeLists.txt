@@ -1,4 +1,6 @@
-project(Common)
+project(Log)
+
+message(STATUS "Sub Project: " ${PROJECT_NAME})
 
 # Recursively find all source and header files
 file(GLOB ${PROJECT_NAME}_SOURCES
@@ -18,3 +20,5 @@ target_sources(${PROJECT_NAME} PUBLIC ${${PROJECT_NAME}_HEADERS})
 
 # Specify the include directory for this target
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::OpenGLWidgets)

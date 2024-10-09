@@ -1,4 +1,4 @@
-#include "core/mainwindow.h"
+#include "mainwindow.h"
 
 #include <QStatusBar>
 #include <QTabBar>

@@ -8,6 +8,7 @@
 #include "core/mainwindow.h"
 #include "interface/baseinterface.h"
 
+
 typedef unsigned int DataType;
 
 class Core : public QObject

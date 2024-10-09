@@ -1,4 +1,4 @@
-
+#include <gl/glew.h>
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>

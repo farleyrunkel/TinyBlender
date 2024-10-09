@@ -3,11 +3,14 @@
 
 #include "common/sceneobject.h"
 
+#include <ACG/Scenegraph/SeparatorNode.hh>
+#include <ACG/Scenegraph/EnvMapNode.hh>
+#include <ACG/Scenegraph/ShaderNode.hh>
+#include <ACG/Scenegraph/StatusNodesT.hh>
 
 template < class MeshT >
 class MeshObject : public SceneObject 
-{
-	
+{	
 public:
 	MeshObject() : SceneObject() {};
 

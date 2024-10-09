@@ -1,4 +1,4 @@
-project(primitives)
+project(Primitives)
 
 set(MODULE_TBPRIMITIVES_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH "Module primitives include")
 
@@ -13,12 +13,9 @@ qt_add_plugin(${PROJECT_NAME}
     CLASS_NAME PrimitivesGenerator
     ${MODULE_SOURCES}
 )
+add_library(TB::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenMeshObject)
-
-target_compile_options(${PROJECT_NAME} PRIVATE /Zc:__cplusplus)
 
