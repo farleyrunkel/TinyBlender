@@ -29,6 +29,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE TB::Log)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE TB::ObjectOpenMesh)
 
+target_precompile_headers(${PROJECT_NAME} PRIVATE pch.h)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
